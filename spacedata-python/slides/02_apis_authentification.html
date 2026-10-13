@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr" data-accent="violet">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Séance 2 — APIs &amp; authentification</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="slide-counter" id="counter"></div>
+<div class="nav-hint">↑ ↓ naviguer · F plein écran</div>
+<div class="nav-buttons"><button id="prevBtn" aria-label="Précédent">‹</button><button id="nextBtn" aria-label="Suivant">›</button></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. TITRE -->
+  <section class="slide slide--title">
+    <div class="slide-content">
+      <div class="module-name">MSc SpaceData — IPSA — Python avancé pour le traitement de données spatiales</div>
+      <div class="kicker">Séance 2 / 6</div>
+      <h1 class="title">APIs &amp; authentification</h1>
+      <p class="subtitle">HTTP, verbes, codes de statut, clés API et tokens — les bases pour consommer n'importe quelle API.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><strong>2h</strong> cours magistral</div>
+        <div class="meta-chip">suivi de <strong>2h</strong> de TP</div>
+        <div class="meta-chip">TP : <code style="color:var(--accent)">02_apis_micro_api/README.md</code></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>Séance 2</span></div>
+  </section>
+
+  <!-- 2. AGENDA -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Au programme</div>
+      <h2 class="title">Ce qu'on va voir aujourd'hui</h2>
+      <ul class="timeline">
+        <li><span class="time">10 min</span><span class="label"><strong>Rappel séance 1</strong><span class="muted"> — pipeline data, pandas, formats</span></span></li>
+        <li><span class="time">25 min</span><span class="label"><strong>Client-serveur &amp; HTTP</strong><span class="muted"> — requête, réponse, anatomie d'un appel</span></span></li>
+        <li><span class="time">20 min</span><span class="label"><strong>Verbes &amp; codes de statut</strong><span class="muted"> — GET/POST/PUT/DELETE, familles 2xx/4xx/5xx</span></span></li>
+        <li><span class="time">20 min</span><span class="label"><strong>Authentification</strong><span class="muted"> — clé API, token bearer, OAuth2, bonnes pratiques</span></span></li>
+        <li><span class="time">20 min</span><span class="label"><strong>Construire sa propre API</strong><span class="muted"> — décorateurs Python, routes GET/POST avec FastAPI</span></span></li>
+        <li><span class="time">15 min</span><span class="label"><strong>Anatomie d'une API REST</strong><span class="muted"> — endpoints, documentation</span></span></li>
+        <li><span class="time">5 min</span><span class="label"><strong>Transition</strong><span class="muted"> — lancement du TP</span></span></li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>2 / 26</span></div>
+  </section>
+
+  <!-- 4. SECTION 1 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">01</div>
+      <h2 class="title">Client-serveur &amp; HTTP</h2>
+      <p class="subtitle">Comment deux programmes échangent de la donnée à travers le réseau.</p>
+    </div>
+  </section>
+
+  <!-- 5. DIAGRAM CLIENT-SERVEUR -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Client-serveur &amp; HTTP</div>
+      <h2 class="title">Le modèle requête / réponse</h2>
+      <p class="subtitle"><strong>HTTP</strong> (<em>HyperText Transfer Protocol</em>) est le protocole de communication standard du web : il définit comment un client formule une requête et comment un serveur y répond, quels que soient leurs langages respectifs.</p>
+      <div class="request-response">
+        <div class="rr-actor">
+          <div class="rr-icon">💻</div>
+          <div class="rr-label">Client</div>
+          <ul style="list-style:none; padding:0; margin:0.6rem 0 0; font-size:0.72rem; color:var(--ink-muted); line-height:1.7; text-align:left;">
+            <li>Navigateur web</li>
+            <li>Script Python (<code>requests</code>)</li>
+            <li>Application mobile</li>
+            <li>Terminal (<code>curl</code>)</li>
+          </ul>
+        </div>
+        <div class="rr-arrows">
+          <div class="rr-line req">requête →</div>
+          <div class="rr-line res">← réponse</div>
+        </div>
+        <div class="rr-actor">
+          <div class="rr-icon">🖥️</div>
+          <div class="rr-label">Serveur</div>
+          <ul style="list-style:none; padding:0; margin:0.6rem 0 0; font-size:0.72rem; color:var(--ink-muted); line-height:1.7; text-align:left;">
+            <li>API REST (FastAPI, Django)</li>
+            <li>Serveur web (Nginx, Apache)</li>
+            <li>Service cloud (AWS, Google Maps)</li>
+            <li>Base de données exposée en API</li>
+          </ul>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.6rem;"><strong>HTTPS</strong> = HTTP + chiffrement (TLS) : les échanges deviennent illisibles pour un tiers qui les intercepterait. En production on utilise presque toujours HTTPS ; notre micro-API tourne en simple HTTP car elle reste en local (<code>127.0.0.1</code>), jamais exposée sur le réseau.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>5 / 26</span></div>
+  </section>
+
+  <!-- 6. ANATOMIE URL -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Client-serveur &amp; HTTP</div>
+      <h2 class="title">Anatomie d'une URL</h2>
+      <p class="subtitle">Avant de regarder une requête HTTP en détail, décomposons l'adresse qu'on appelle : une URL (<em>Uniform Resource Locator</em>) a toujours la même structure.</p>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">URL complète</span></div>
+        <pre><code data-lang="text">http://127.0.0.1:8000/villes
+^^^^   ^^^^^^^^^ ^^^^ ^^^^^^
+schéma    host   port  path</code></pre>
+      </div>
+      <ul class="bullets compact" style="margin-top:1rem;">
+        <li><strong>Schéma</strong> (<code>http://</code> ou <code>https://</code>) — le protocole utilisé pour la communication</li>
+        <li><strong>Host</strong> (<code>127.0.0.1</code>) — l'adresse de la machine qui héberge le serveur</li>
+        <li><strong>Port</strong> (<code>8000</code>) — la "porte" sur laquelle le serveur écoute ; une même machine peut faire tourner plusieurs serveurs sur des ports différents</li>
+        <li><strong>Path</strong> (<code>/villes</code>) — la route demandée sur ce serveur, celle que votre code FastAPI associe à une fonction</li>
+      </ul>
+      <p class="callout" style="margin-top:1.3rem;"><code>127.0.0.1</code> est une adresse spéciale appelée <strong>localhost</strong> : elle désigne toujours "cette machine elle-même", quel que soit l'ordinateur sur lequel on l'exécute. C'est pour ça que votre micro-API, lancée en local, est jointe sur <code>127.0.0.1</code> et jamais accessible depuis un autre ordinateur (sauf solution comme ngrok, vue plus tard).</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>6 / 26</span></div>
+  </section>
+
+  <!-- 7. ROLE DU DNS -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Client-serveur &amp; HTTP</div>
+      <h2 class="title">Le DNS : traduire un nom en adresse IP</h2>
+      <p class="subtitle">En dehors du réseau local, le <strong>host</strong> d'une URL est en général un nom de domaine (<code>earthquake.usgs.gov</code>) plutôt qu'une adresse IP brute. Mais un ordinateur ne communique qu'avec des adresses IP : il faut donc une étape de traduction.</p>
+
+      <div class="request-response">
+        <div class="rr-actor">
+          <div class="rr-icon">💻</div>
+          <div class="rr-label">Votre client</div>
+          <ul style="list-style:none; padding:0; margin:0.6rem 0 0; font-size:0.72rem; color:var(--ink-muted); line-height:1.7; text-align:left;">
+            <li>Demande : "quelle est l'IP de<br><code>earthquake.usgs.gov</code> ?"</li>
+          </ul>
+        </div>
+        <div class="rr-arrows">
+          <div class="rr-line req">requête DNS (UDP/53) →</div>
+          <div class="rr-line res">← adresse IP</div>
+        </div>
+        <div class="rr-actor">
+          <div class="rr-icon">📇</div>
+          <div class="rr-label">Serveur DNS</div>
+          <ul style="list-style:none; padding:0; margin:0.6rem 0 0; font-size:0.72rem; color:var(--ink-muted); line-height:1.7; text-align:left;">
+            <li>Un annuaire géant qui associe chaque nom de domaine à une adresse IP</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="callout" style="margin-top:1.2rem; font-size:0.85rem;">
+        Le <strong>DNS</strong> (<em>Domain Name System</em>) fonctionne comme un répertoire téléphonique. C'est un protocole distinct d'HTTP : <code>requests.get("https://...")</code> déclenche cette résolution DNS automatiquement en arrière-plan, avant même d'initier la connexion HTTP.
+      </p>
+
+      <div style="margin-top: 1rem; padding: 0.8rem; border-left: 4px solid #ff9800; background: rgba(255,152,0,0.1); font-size: 0.8rem;">
+        <strong>⚠️ Configuration :</strong> Pour changer de résolveur DNS, vous devez obligatoirement renseigner son <strong>adresse IP brute</strong> (l'ordinateur ne peut pas deviner le nom de domaine du serveur DNS avant de l'avoir interrogé !).
+      </div>
+
+      <div style="margin-top: 1rem; font-size: 0.8rem;">
+        <strong>Quelques serveurs DNS publics célèbres :</strong>
+        <ul style="margin: 0.4rem 0 0; padding-left: 1.2rem; line-height: 1.4;">
+          <li><strong>Google DNS :</strong> <code>8.8.8.8</code> &amp; <code>8.8.4.4</code></li>
+          <li><strong>Cloudflare :</strong> <code>1.1.1.1</code> &amp; <code>1.0.0.1</code> (Axé sur la vie privée et la rapidité)</li>
+          <li><strong>Quad9 :</strong> <code>9.9.9.9</code> (Bloque les domaines malveillants par défaut)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>7 / 26</span></div>
+</section>
+
+
+  <!-- 8. ANATOMIE REQUETE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Client-serveur &amp; HTTP</div>
+      <h2 class="title">Anatomie d'une requête HTTP</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">requête brute</span></div>
+          <pre><code data-lang="text">GET /villes HTTP/1.1
+Host: 127.0.0.1:8000
+Authorization: cle-secrete-tp2</code></pre>
+        </div>
+        <ul class="bullets compact">
+          <li><strong>Méthode</strong> — l'action voulue (<code>GET</code>)</li>
+          <li><strong>URL</strong> — la ressource ciblée (<code>/villes</code>)</li>
+          <li><strong>Headers</strong> — métadonnées (authentification, format...)</li>
+          <li><strong>Body</strong> — les données envoyées <span class="muted">(absent en GET)</span></li>
+        </ul>
+      </div>
+      <div class="code-window" style="margin-top:1.2rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">import requests
+
+reponse = requests.get(
+    "http://127.0.0.1:8000/villes",
+    headers={"Authorization": "cle-secrete-tp2"},
+)</code></pre>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>8 / 26</span></div>
+  </section>
+
+  <!-- 9. TIMEOUT -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Client-serveur &amp; HTTP</div>
+      <h2 class="title">Un paramètre essentiel : <code style="color:var(--accent)">timeout</code></h2>
+      <p class="callout warning" style="margin-bottom:1.3rem;">Par défaut, <code>requests</code> attend une réponse <strong>indéfiniment</strong>. Si le serveur ne répond jamais, votre script ou votre notebook reste figé — sans message d'erreur.</p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">try:
+    reponse = requests.get(
+        URL, params=params, timeout=10,
+    )
+    reponse.raise_for_status()
+except requests.exceptions.Timeout:
+    print("Le serveur met trop de temps à répondre")
+except requests.exceptions.RequestException as erreur:
+    print(f"Erreur réseau : {erreur}")</code></pre>
+        </div>
+        <ul class="bullets compact">
+          <li><code>timeout=10</code> — abandonne après <strong>10 secondes</strong> sans réponse et lève une exception <code>Timeout</code></li>
+          <li>On peut aussi passer un tuple <code>timeout=(3, 10)</code> : 3 s pour établir la connexion, 10 s pour recevoir la réponse</li>
+          <li class="muted">C'est exactement ce motif (<code>timeout</code> + <code>try/except</code>) que vous retrouverez dans les TP séances 2 et 4</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>9 / 26</span></div>
+  </section>
+
+  <!-- 10. SECTION 2 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">02</div>
+      <h2 class="title">Verbes &amp; codes de statut</h2>
+      <p class="subtitle">Le vocabulaire commun à toutes les APIs REST.</p>
+    </div>
+  </section>
+
+  <!-- 11. VERBES HTTP -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Verbes &amp; codes de statut</div>
+      <h2 class="title">Les quatre verbes essentiels</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Verbe</th><th>Action</th><th>Body ?</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-get">GET</span></td><td>Lire une ressource</td><td>Non</td><td><code>GET /villes/3</code></td></tr>
+            <tr><td><span class="badge badge-post">POST</span></td><td>Créer une ressource</td><td>Oui</td><td><code>POST /villes</code></td></tr>
+            <tr><td><span class="badge badge-put">PUT</span></td><td>Remplacer une ressource</td><td>Oui</td><td><code>PUT /villes/3</code></td></tr>
+            <tr><td><span class="badge badge-delete">DELETE</span></td><td>Supprimer une ressource</td><td>Non</td><td><code>DELETE /villes/3</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>11 / 26</span></div>
+  </section>
+
+  <!-- 12. VERBES EN CODE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Verbes &amp; codes de statut</div>
+      <h2 class="title">Les quatre verbes, en code</h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title"><span class="badge badge-get">GET</span> Lire</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">requests.get(f"{BASE_URL}/villes/2", headers=headers)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title"><span class="badge badge-post">POST</span> Créer</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">requests.post(
+    f"{BASE_URL}/villes", headers=headers,
+    json={"nom": "Rennes", "region": "Bretagne",
+          "population": 220000},
+)</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="two-col narrow-gap" style="margin-top:1rem;">
+        <div>
+          <div class="col-title"><span class="badge badge-put">PUT</span> Remplacer</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">requests.put(
+    f"{BASE_URL}/villes/2", headers=headers,
+    json={"nom": "Lyon", "region": "ARA",
+          "population": 525000},
+)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title"><span class="badge badge-delete">DELETE</span> Supprimer</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">requests.delete(f"{BASE_URL}/villes/2", headers=headers)</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1rem;">Dans les quatre cas, <code>headers={"Authorization": API_KEY}</code> reste nécessaire : notre micro-API protège tous ses endpoints.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>12 / 26</span></div>
+  </section>
+
+  <!-- 13. CODES STATUT -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Verbes &amp; codes de statut</div>
+      <h2 class="title">Trois familles de codes à connaître</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Famille</th><th>Signification</th><th>Exemples</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-2xx">2xx</span></td><td>Succès</td><td><code>200 OK</code>, <code>201 Created</code></td></tr>
+            <tr><td><span class="badge badge-4xx">4xx</span></td><td>Erreur côté client</td><td><code>401 Unauthorized</code>, <code>404 Not Found</code></td></tr>
+            <tr><td><span class="badge badge-5xx">5xx</span></td><td>Erreur côté serveur</td><td><code>500 Internal Server Error</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><strong>Réflexe à avoir :</strong> toujours vérifier le code de statut avant d'utiliser la réponse — ne jamais supposer qu'une requête a réussi.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>13 / 26</span></div>
+  </section>
+
+  <!-- 14. SECTION 3 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">03</div>
+      <h2 class="title">Authentification</h2>
+      <p class="subtitle">Comment un serveur sait qui lui parle — et pourquoi il refuse parfois de répondre.</p>
+    </div>
+  </section>
+
+  <!-- 15. CLE API vs TOKEN vs OAUTH2 -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Authentification</div>
+      <h2 class="title">Trois mécanismes, une même idée</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Mécanisme</th><th>Principe</th><th>Où on le voit</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Clé API</strong></td><td>Chaîne secrète fixe, envoyée à chaque requête</td><td>Notre micro-API, beaucoup d'APIs simples</td></tr>
+            <tr><td><strong>Token <em>bearer</em></strong></td><td>Jeton (souvent temporaire), envoyé dans le header <code>Authorization: Bearer ...</code></td><td>NASA Earthdata (séance 4)</td></tr>
+            <tr><td><strong>OAuth2</strong></td><td>Protocole complet d'autorisation, avec échange identifiants → token</td><td>Copernicus Data Space (séance 4)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">On reste aujourd'hui sur la <strong>clé API</strong> — la plus simple. Token et OAuth2 seront illustrés concrètement en séance 4.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>15 / 26</span></div>
+  </section>
+
+  <!-- 16. BONNES PRATIQUES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Authentification</div>
+      <h2 class="title">Une règle non négociable</h2>
+      <p class="callout warning" style="margin-bottom:1.4rem;"><strong>Jamais</strong> de clé ou de mot de passe écrit en dur dans le code — surtout pas dans un notebook qu'on pourrait committer sur GitHub. <strong> On utilise plutôt un fichier .env pour stocker les données sensibles, qu'on ne push par sur GitHub !</strong></p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">.env</span></div>
+          <pre><code data-lang="bash">MICRO_API_KEY=cle-secrete-tp2</code></pre>
+        </div>
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">import os
+from dotenv import load_dotenv
+
+load_dotenv()
+cle = os.getenv("MICRO_API_KEY")</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>16 / 26</span></div>
+  </section>
+
+  <!-- 17. 401 vs 200 -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Authentification</div>
+      <h2 class="title">Mauvaise clé vs bonne clé, en pratique</h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title" style="color:var(--status-critical);">❌ Mauvaise clé</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">reponse = requests.get(
+    f"{BASE_URL}/villes",
+    headers={"Authorization": "mauvaise-cle"},
+)
+print(reponse.status_code)</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">401
+{"detail": "Clé API manquante ou incorrecte"}</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title" style="color:var(--status-good);">✅ Bonne clé</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">reponse = requests.get(
+    f"{BASE_URL}/villes",
+    headers={"Authorization": API_KEY},
+)
+print(reponse.status_code)</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">200
+[{"id": 1, "nom": "Paris", ...}]</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;">Seul le header <code>Authorization</code> change entre les deux appels — c'est tout ce qui sépare un <code>401</code> d'un <code>200</code> ici.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>17 / 26</span></div>
+  </section>
+
+  <!-- 18. SECTION 4 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">04</div>
+      <h2 class="title">Anatomie d'une API REST</h2>
+      <p class="subtitle">Ressources, endpoints : le vocabulaire pour lire n'importe quelle documentation d'API.</p>
+    </div>
+  </section>
+
+  <!-- 19. CONCEPTS REST -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Anatomie d'une API REST</div>
+      <h2 class="title">Le vocabulaire à connaître</h2>
+      <ul class="bullets">
+        <li><strong>Ressource</strong> — une entité manipulée par l'API (une ville, un séisme...)</li>
+        <li><strong>Endpoint</strong> — l'URL associée à une ressource ou une action, ex. <code>/villes/{id}</code></li>
+        <li><strong>Rate limiting</strong> — le serveur limite le nombre de requêtes par minute pour se protéger</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>19 / 26</span></div>
+  </section>
+
+  <!-- 20. DOCUMENTATION INTERACTIVE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Anatomie d'une API REST</div>
+      <h2 class="title">Documenter une API : Swagger / OpenAPI</h2>
+      <p class="subtitle" style="font-size:0.9rem;"><strong>OpenAPI</strong> est un standard décrivant une API de façon lisible par une machine ; <strong>Swagger UI</strong> en affiche une documentation interactive testable dans le navigateur. FastAPI la génère automatiquement — mais sa qualité dépend de ce que vous écrivez.</p>
+      <div class="two-col narrow-gap">
+        <ul class="bullets compact">
+          <li>La <strong>docstring</strong> de la fonction devient la description de l'endpoint</li>
+          <li>Les <strong>type hints</strong> et modèles <code>Pydantic</code> génèrent le schéma des paramètres et du corps</li>
+          <li><code>summary=</code>, <code>tags=</code> sur le décorateur classent et titrent chaque endpoint</li>
+          <li><code>response_model=</code> documente la forme exacte du JSON renvoyé</li>
+        </ul>
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">server.py</span></div>
+          <pre><code data-lang="python">class Ville(BaseModel):
+    """Une ville et sa population."""
+    nom: str
+    region: str
+    population: int
+
+@app.get("/villes/{id}", response_model=Ville,
+         tags=["villes"])
+def obtenir_ville(id: int):
+    """Retourne une ville à partir de son id."""
+    ...</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>20 / 26</span></div>
+  </section>
+
+  <!-- 21. GENERER CONSULTER DOC -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Anatomie d'une API REST</div>
+      <h2 class="title">Générer et consulter sa documentation</h2>
+      <p class="subtitle" style="font-size:0.9rem;">Vous n'avez <strong>rien à générer manuellement</strong> : FastAPI construit le schéma OpenAPI au démarrage, à partir des docstrings et des types que vous avez écrits. Il ne reste qu'à aller le consulter.</p>
+      <ul class="timeline">
+        <li><span class="time">1</span><span class="label"><strong>Lancer le serveur</strong><span class="muted"> — <code>fastapi dev server.py</code></span></span></li>
+        <li><span class="time">2</span><span class="label"><strong>Ouvrir <code>/docs</code></strong><span class="muted"> — Swagger UI liste tous vos endpoints, groupés par <code>tags</code></span></span></li>
+        <li><span class="time">3</span><span class="label"><strong>Déplier un endpoint</strong><span class="muted"> — paramètres, corps attendu, réponses possibles, tout généré depuis votre code</span></span></li>
+        <li><span class="time">4</span><span class="label"><strong>"Try it out" → "Execute"</strong><span class="muted"> — remplir les champs et exécuter une vraie requête sans quitter le navigateur</span></span></li>
+        <li><span class="time">5</span><span class="label"><strong>Alternative : <code>/redoc</code></strong><span class="muted"> — présentation en lecture seule, plus soignée pour partager la doc à un tiers</span></span></li>
+      </ul>
+      <div class="link-grid" style="margin-top:1.3rem;">
+        <a class="link-card" href="http://127.0.0.1:8000/docs">
+          <span class="link-icon">📘</span>
+          <span><span class="link-title">Doc interactive de notre micro-API</span><span class="link-url">127.0.0.1:8000/docs</span></span>
+        </a>
+        <a class="link-card" href="https://earthquake.usgs.gov/fdsnws/event/1/">
+          <span class="link-icon">🌍</span>
+          <span><span class="link-title">Documentation de l'API USGS</span><span class="link-url">earthquake.usgs.gov/fdsnws/event/1</span></span>
+        </a>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>21 / 26</span></div>
+  </section>
+
+  <!-- 22. MINI APP FASTAPI -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Construire sa propre API</div>
+      <h2 class="title">Une mini-app FastAPI, en quelques lignes</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">server.py</span></div>
+        <pre><code data-lang="python">from fastapi import FastAPI
+
+app = FastAPI()
+
+villes = [{"nom": "Paris", "population": 2145000}]
+
+@app.get("/villes")
+def lister_villes():
+    return villes
+
+@app.post("/villes")
+def ajouter_ville(ville: dict):
+    villes.append(ville)
+    return ville</code></pre>
+      </div>
+      <ul class="bullets compact" style="margin-top:1.2rem;">
+        <li><code>FastAPI()</code> crée l'application ; chaque fonction devient une route grâce à un <strong>décorateur</strong> : <code>@app.get(...)</code>, <code>@app.post(...)</code></li>
+        <li>La valeur retournée par la fonction est automatiquement sérialisée en JSON</li>
+        <li>On lance le serveur avec <code>fastapi dev server.py</code> (rechargement automatique inclus)</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>22 / 26</span></div>
+  </section>
+
+  <!-- 23. DECORATEURS PYTHON -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Construire sa propre API</div>
+      <h2 class="title">Un décorateur, c'est une fonction qui en enveloppe une autre</h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Exemple hyper basique</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">def chronometre(fonction):
+    def wrapper(*args, **kwargs):
+        debut = time.time()
+        resultat = fonction(*args, **kwargs)
+        duree = time.time() - debut
+        print(f"{fonction.__name__} : {duree:.3f}s")
+        return resultat
+    return wrapper
+
+@chronometre
+def calcul_long():
+    time.sleep(1)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Vérifier une clé API, en pratique</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">server.py</span></div>
+            <pre><code data-lang="python">def verifier_cle(authorization: str = Header(default=None)):
+    """Dépendance : vérifie que le header Authorization
+    contient la bonne clé API."""
+    if authorization != API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Clé API manquante ou incorrecte",
+        )
+
+@app.post(
+    "/villes", status_code=201, tags=["villes"],
+    dependencies=[Depends(verifier_cle)],
+)
+def ajouter_ville(ville: dict):
+    ...</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.3rem;">On n'écrit pas son propre décorateur pour vérifier une clé API : FastAPI fournit exactement ce mécanisme via <code>Depends()</code>, passé dans <code>dependencies=[...]</code> du décorateur de route. Mais <code>@app.get(...)</code> et <code>@app.post(...)</code> restent eux-mêmes des décorateurs : ils enregistrent votre fonction comme gestionnaire d'une route, sans changer son code — comprendre les décorateurs reste donc indispensable.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>23 / 26</span></div>
+  </section>
+
+  <!-- 24. NOTRE MICRO-API -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Aperçu du TP</div>
+      <h2 class="title">La micro-API qu'on va construire</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Endpoint</th><th>Description</th><th>Auth requise</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-get">GET</span> <code>/villes</code></td><td>Liste les villes (DataFrame)</td><td class="muted">—</td></tr>
+            <tr><td><span class="badge badge-get">GET</span> <code>/villes/csv</code>, <code>/villes/parquet</code></td><td>Télécharge le DataFrame</td><td class="muted">—</td></tr>
+            <tr><td><span class="badge badge-post">POST</span> <code>/villes</code></td><td>Ajoute une ville</td><td>✓</td></tr>
+            <tr><td><span class="badge badge-put">PUT</span> <code>/villes/{nom}</code></td><td>Modifie une ville</td><td>✓</td></tr>
+            <tr><td><span class="badge badge-delete">DELETE</span> <code>/villes/{nom}</code></td><td>Supprime une ville</td><td>✓</td></tr>
+            <tr><td><span class="badge badge-post">POST</span> <code>/villes/distance</code></td><td>Distance entre deux villes (EPSG:2154)</td><td class="muted">—</td></tr>
+            <tr><td><span class="badge badge-get">GET</span> <code>/villes/carte</code></td><td>Carte HTML interactive</td><td class="muted">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">Tout est à coder en TP, avec <strong>FastAPI</strong> (<code>fastapi dev server.py</code>), en local sur <code>http://127.0.0.1:8000</code> — détails dans <code>README.md</code>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>24 / 26</span></div>
+  </section>
+
+  <!-- 25. TEASER SEANCE 4 -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Pour la suite, en séance 4</div>
+      <h2 class="title">Après les APIs "jouet", les vraies APIs spatiales</h2>
+      <ul class="bullets">
+        <li><strong>Copernicus Data Space Ecosystem</strong> — images satellite Sentinel <span class="muted">(séance 4)</span></li>
+        <li><strong>NASA Earthdata</strong> — dizaines de collections scientifiques <span class="muted">(séance 4)</span></li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>25 / 26</span></div>
+  </section>
+
+  <!-- 26. RECAP + TRANSITION -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Récapitulatif</div>
+      <h2 class="title">Ce qu'on a vu aujourd'hui</h2>
+      <ul class="recap-list">
+        <li>Le modèle client-serveur, HTTP/HTTPS, et l'anatomie d'une requête</li>
+        <li>Les verbes <strong>GET/POST/PUT/DELETE</strong> en code, et les familles de codes de statut</li>
+        <li>Clé API, token bearer, OAuth2 — et la règle d'or : jamais en dur dans le code</li>
+        <li>Le vocabulaire REST et ce qui rend une documentation OpenAPI vraiment utile</li>
+      </ul>
+      <p class="callout" style="margin-top:1.8rem;"><strong>Place au TP :</strong> lancez la micro-API (<code>fastapi dev server.py</code>) puis suivez les consignes dans <code>notebooks/02_apis_micro_api/README.md</code>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>26 / 26</span></div>
+  </section>
+
+</div>
+
+<script src="assets/deck.js"></script>
+</body>
+</html>

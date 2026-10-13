@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_716790bef75e10825495aab155030412 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_716790bef75e10825495aab155030412" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_716790bef75e10825495aab155030412 = L.map(
+                "map_716790bef75e10825495aab155030412",
+                {
+                    center: [46.6, 2.5],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 6,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_0a49449e94e93dadedaed5a82835c642 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_0a49449e94e93dadedaed5a82835c642.addTo(map_716790bef75e10825495aab155030412);
+        
+    
+            var circle_marker_08ef8b6f554166300e0ff7527cf8eb4d = L.circleMarker(
+                [48.8566, 2.3522],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21.45, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_bd982fb26942e5a48201d1985864f6b3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c9fc15f461450d684416137bb87f7c72 = $(`<div id="html_c9fc15f461450d684416137bb87f7c72" style="width: 100.0%; height: 100.0%;">Paris (Nord-Ouest)<br>Population : 2,145,000 hab.<br>PIB/hab : 56,400 €</div>`)[0];
+                popup_bd982fb26942e5a48201d1985864f6b3.setContent(html_c9fc15f461450d684416137bb87f7c72);
+            
+        
+
+        circle_marker_08ef8b6f554166300e0ff7527cf8eb4d.bindPopup(popup_bd982fb26942e5a48201d1985864f6b3)
+        ;
+
+        
+    
+    
+            var circle_marker_bc45877c67a274605fc0dd0986fce3c7 = L.circleMarker(
+                [43.2965, 5.3698],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.7, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_aa23fc92be097bb9b4d808363433b28d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_92d8fa770a6e2c519a66807274a98e78 = $(`<div id="html_92d8fa770a6e2c519a66807274a98e78" style="width: 100.0%; height: 100.0%;">Marseille (Sud-Est)<br>Population : 870,000 hab.<br>PIB/hab : 35,500 €</div>`)[0];
+                popup_aa23fc92be097bb9b4d808363433b28d.setContent(html_92d8fa770a6e2c519a66807274a98e78);
+            
+        
+
+        circle_marker_bc45877c67a274605fc0dd0986fce3c7.bindPopup(popup_aa23fc92be097bb9b4d808363433b28d)
+        ;
+
+        
+    
+    
+            var circle_marker_894c554a5b727e3cd60b9b4f2b2ecabc = L.circleMarker(
+                [45.764, 4.8357],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.22, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_654db443415964e8c09d5663e76ca6b8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e74edc636269b7a2e1640e68aff2b5b6 = $(`<div id="html_e74edc636269b7a2e1640e68aff2b5b6" style="width: 100.0%; height: 100.0%;">Lyon (Sud-Est)<br>Population : 522,000 hab.<br>PIB/hab : 36,600 €</div>`)[0];
+                popup_654db443415964e8c09d5663e76ca6b8.setContent(html_e74edc636269b7a2e1640e68aff2b5b6);
+            
+        
+
+        circle_marker_894c554a5b727e3cd60b9b4f2b2ecabc.bindPopup(popup_654db443415964e8c09d5663e76ca6b8)
+        ;
+
+        
+    
+    
+            var circle_marker_bd9b9ba25e356a92b570f84d63e26938 = L.circleMarker(
+                [43.6047, 1.4442],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.93, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_099f245452c0b4094cef881b28e97cca = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_64e83b58f5e77f0aab2957b34af80324 = $(`<div id="html_64e83b58f5e77f0aab2957b34af80324" style="width: 100.0%; height: 100.0%;">Toulouse (Sud-Ouest)<br>Population : 493,000 hab.<br>PIB/hab : 31,400 €</div>`)[0];
+                popup_099f245452c0b4094cef881b28e97cca.setContent(html_64e83b58f5e77f0aab2957b34af80324);
+            
+        
+
+        circle_marker_bd9b9ba25e356a92b570f84d63e26938.bindPopup(popup_099f245452c0b4094cef881b28e97cca)
+        ;
+
+        
+    
+    
+            var circle_marker_9c26c7043efdaf061e8dbcab356c345f = L.circleMarker(
+                [43.7102, 7.262],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3.42, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_6b3977c5a9f3228524e934f43de6d2b1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fa76e25ede1178342fa2e4427e789c27 = $(`<div id="html_fa76e25ede1178342fa2e4427e789c27" style="width: 100.0%; height: 100.0%;">Nice (Sud-Est)<br>Population : 342,000 hab.<br>PIB/hab : 34,300 €</div>`)[0];
+                popup_6b3977c5a9f3228524e934f43de6d2b1.setContent(html_fa76e25ede1178342fa2e4427e789c27);
+            
+        
+
+        circle_marker_9c26c7043efdaf061e8dbcab356c345f.bindPopup(popup_6b3977c5a9f3228524e934f43de6d2b1)
+        ;
+
+        
+    
+    
+            var circle_marker_59186e4f4ab0c620500080b33f047736 = L.circleMarker(
+                [47.2184, -1.5536],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3.14, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_81a4c8539005fef1e035a8702df8ec35 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7dfc36329dec2b8ea25cad78403b6a71 = $(`<div id="html_7dfc36329dec2b8ea25cad78403b6a71" style="width: 100.0%; height: 100.0%;">Nantes (Sud-Ouest)<br>Population : 314,000 hab.<br>PIB/hab : 33,100 €</div>`)[0];
+                popup_81a4c8539005fef1e035a8702df8ec35.setContent(html_7dfc36329dec2b8ea25cad78403b6a71);
+            
+        
+
+        circle_marker_59186e4f4ab0c620500080b33f047736.bindPopup(popup_81a4c8539005fef1e035a8702df8ec35)
+        ;
+
+        
+    
+    
+            var circle_marker_7e87915600aaa39db03f56662c2ece54 = L.circleMarker(
+                [43.6108, 3.8767],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_0d854b842990219c30257a141092a31c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_762029d84c3be2bab28a994e96e1a880 = $(`<div id="html_762029d84c3be2bab28a994e96e1a880" style="width: 100.0%; height: 100.0%;">Montpellier (Sud-Est)<br>Population : 295,000 hab.<br>PIB/hab : 32,400 €</div>`)[0];
+                popup_0d854b842990219c30257a141092a31c.setContent(html_762029d84c3be2bab28a994e96e1a880);
+            
+        
+
+        circle_marker_7e87915600aaa39db03f56662c2ece54.bindPopup(popup_0d854b842990219c30257a141092a31c)
+        ;
+
+        
+    
+    
+            var circle_marker_78037978b6ce31b1e2185903541aa295 = L.circleMarker(
+                [48.5734, 7.7521],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_a1326c2c5c24f5c9096bd4a56c0eff25 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_09f5994a70c68234a067e5534cbbe011 = $(`<div id="html_09f5994a70c68234a067e5534cbbe011" style="width: 100.0%; height: 100.0%;">Strasbourg (Nord-Est)<br>Population : 291,000 hab.<br>PIB/hab : 34,400 €</div>`)[0];
+                popup_a1326c2c5c24f5c9096bd4a56c0eff25.setContent(html_09f5994a70c68234a067e5534cbbe011);
+            
+        
+
+        circle_marker_78037978b6ce31b1e2185903541aa295.bindPopup(popup_a1326c2c5c24f5c9096bd4a56c0eff25)
+        ;
+
+        
+    
+    
+            var circle_marker_1ab662045f18fbdbfc1b53ca42355b54 = L.circleMarker(
+                [44.8378, -0.5792],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_461739b9941222dc0a5c6285281f5a37 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5e992ae9e5b23c2befb922a662c7e83d = $(`<div id="html_5e992ae9e5b23c2befb922a662c7e83d" style="width: 100.0%; height: 100.0%;">Bordeaux (Sud-Ouest)<br>Population : 260,000 hab.<br>PIB/hab : 32,600 €</div>`)[0];
+                popup_461739b9941222dc0a5c6285281f5a37.setContent(html_5e992ae9e5b23c2befb922a662c7e83d);
+            
+        
+
+        circle_marker_1ab662045f18fbdbfc1b53ca42355b54.bindPopup(popup_461739b9941222dc0a5c6285281f5a37)
+        ;
+
+        
+    
+    
+            var circle_marker_3a63aa7998924fc4be4d698552b6227d = L.circleMarker(
+                [50.6292, 3.0573],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_369dd019d0d55b8d8e0189c70b783570 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d87dd4168ae411f03bc057bba0611b80 = $(`<div id="html_d87dd4168ae411f03bc057bba0611b80" style="width: 100.0%; height: 100.0%;">Lille (Nord-Ouest)<br>Population : 233,000 hab.<br>PIB/hab : 28,500 €</div>`)[0];
+                popup_369dd019d0d55b8d8e0189c70b783570.setContent(html_d87dd4168ae411f03bc057bba0611b80);
+            
+        
+
+        circle_marker_3a63aa7998924fc4be4d698552b6227d.bindPopup(popup_369dd019d0d55b8d8e0189c70b783570)
+        ;
+
+        
+    
+    
+            var circle_marker_5479ae189a9cd599d8a759de9201baea = L.circleMarker(
+                [48.1173, -1.6778],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_7205e9e846bd2fb415dabf680e4b5585 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a9ebc5aedc98d392b44253a16b8b62ac = $(`<div id="html_a9ebc5aedc98d392b44253a16b8b62ac" style="width: 100.0%; height: 100.0%;">Rennes (Nord-Ouest)<br>Population : 220,000 hab.<br>PIB/hab : 33,300 €</div>`)[0];
+                popup_7205e9e846bd2fb415dabf680e4b5585.setContent(html_a9ebc5aedc98d392b44253a16b8b62ac);
+            
+        
+
+        circle_marker_5479ae189a9cd599d8a759de9201baea.bindPopup(popup_7205e9e846bd2fb415dabf680e4b5585)
+        ;
+
+        
+    
+    
+            var circle_marker_daedb5aa74c07973d133372c473dd4d2 = L.circleMarker(
+                [49.2583, 4.0317],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_e02725372df2be6fef50ad4675d1125f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1e48f1dfb95f9c9e830b27cb505b703b = $(`<div id="html_1e48f1dfb95f9c9e830b27cb505b703b" style="width: 100.0%; height: 100.0%;">Reims (Nord-Est)<br>Population : 182,000 hab.<br>PIB/hab : 33,100 €</div>`)[0];
+                popup_e02725372df2be6fef50ad4675d1125f.setContent(html_1e48f1dfb95f9c9e830b27cb505b703b);
+            
+        
+
+        circle_marker_daedb5aa74c07973d133372c473dd4d2.bindPopup(popup_e02725372df2be6fef50ad4675d1125f)
+        ;
+
+        
+    
+    
+            var circle_marker_1bcdde2655eb90a0a331157043a3061b = L.circleMarker(
+                [49.4944, 0.1079],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_51cc66488e5dce47a0d148af34fe4ddd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f732e1ea35d2be76e78156133338ddef = $(`<div id="html_f732e1ea35d2be76e78156133338ddef" style="width: 100.0%; height: 100.0%;">Le Havre (Nord-Ouest)<br>Population : 170,000 hab.<br>PIB/hab : 31,200 €</div>`)[0];
+                popup_51cc66488e5dce47a0d148af34fe4ddd.setContent(html_f732e1ea35d2be76e78156133338ddef);
+            
+        
+
+        circle_marker_1bcdde2655eb90a0a331157043a3061b.bindPopup(popup_51cc66488e5dce47a0d148af34fe4ddd)
+        ;
+
+        
+    
+    
+            var circle_marker_ba95f21590a96a683680c6caccb7e403 = L.circleMarker(
+                [45.4397, 4.3872],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_038197577611701e9c7ca79d333bc2ed = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f9932c17f2ab6cf9d734b04a1ebd3be8 = $(`<div id="html_f9932c17f2ab6cf9d734b04a1ebd3be8" style="width: 100.0%; height: 100.0%;">Saint-Étienne (Sud-Est)<br>Population : 172,000 hab.<br>PIB/hab : 35,500 €</div>`)[0];
+                popup_038197577611701e9c7ca79d333bc2ed.setContent(html_f9932c17f2ab6cf9d734b04a1ebd3be8);
+            
+        
+
+        circle_marker_ba95f21590a96a683680c6caccb7e403.bindPopup(popup_038197577611701e9c7ca79d333bc2ed)
+        ;
+
+        
+    
+    
+            var circle_marker_e239ecb68e7a3ac4baa183b8b8747216 = L.circleMarker(
+                [43.1242, 5.928],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_09e2e856beecf300b8ab701eef364ee0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_baf80416c91c4412a4e221b59798f24f = $(`<div id="html_baf80416c91c4412a4e221b59798f24f" style="width: 100.0%; height: 100.0%;">Toulon (Sud-Est)<br>Population : 171,000 hab.<br>PIB/hab : 34,600 €</div>`)[0];
+                popup_09e2e856beecf300b8ab701eef364ee0.setContent(html_baf80416c91c4412a4e221b59798f24f);
+            
+        
+
+        circle_marker_e239ecb68e7a3ac4baa183b8b8747216.bindPopup(popup_09e2e856beecf300b8ab701eef364ee0)
+        ;
+
+        
+    
+    
+            var circle_marker_cd6539c938e67446ff4c2328a97e803d = L.circleMarker(
+                [45.1885, 5.7245],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_5d9c36cfb6e5f1262d8378e2115b0321 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_878b8eb5ac75a5a38f29dc3a7e05a3fb = $(`<div id="html_878b8eb5ac75a5a38f29dc3a7e05a3fb" style="width: 100.0%; height: 100.0%;">Grenoble (Sud-Est)<br>Population : 158,000 hab.<br>PIB/hab : 37,400 €</div>`)[0];
+                popup_5d9c36cfb6e5f1262d8378e2115b0321.setContent(html_878b8eb5ac75a5a38f29dc3a7e05a3fb);
+            
+        
+
+        circle_marker_cd6539c938e67446ff4c2328a97e803d.bindPopup(popup_5d9c36cfb6e5f1262d8378e2115b0321)
+        ;
+
+        
+    
+    
+            var circle_marker_35e4507399e9ec79c998a1e5da6f06f1 = L.circleMarker(
+                [47.322, 5.0415],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_97c41dc6524b95fba4e230d62efe70dd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b3a511b56470245eaf7a3c5e3dfa4675 = $(`<div id="html_b3a511b56470245eaf7a3c5e3dfa4675" style="width: 100.0%; height: 100.0%;">Dijon (Sud-Est)<br>Population : 156,000 hab.<br>PIB/hab : 30,000 €</div>`)[0];
+                popup_97c41dc6524b95fba4e230d62efe70dd.setContent(html_b3a511b56470245eaf7a3c5e3dfa4675);
+            
+        
+
+        circle_marker_35e4507399e9ec79c998a1e5da6f06f1.bindPopup(popup_97c41dc6524b95fba4e230d62efe70dd)
+        ;
+
+        
+    
+    
+            var circle_marker_3b60a45113016df6f9317fb6b76eb8d8 = L.circleMarker(
+                [47.4784, -0.5632],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_90f8299e306fa690a2ed874e39eb6f08 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6532f49243075937c1523d3f1f65f217 = $(`<div id="html_6532f49243075937c1523d3f1f65f217" style="width: 100.0%; height: 100.0%;">Angers (Nord-Ouest)<br>Population : 152,000 hab.<br>PIB/hab : 33,500 €</div>`)[0];
+                popup_90f8299e306fa690a2ed874e39eb6f08.setContent(html_6532f49243075937c1523d3f1f65f217);
+            
+        
+
+        circle_marker_3b60a45113016df6f9317fb6b76eb8d8.bindPopup(popup_90f8299e306fa690a2ed874e39eb6f08)
+        ;
+
+        
+    
+    
+            var circle_marker_9d85e580c637597a599aa5a0d71c5293 = L.circleMarker(
+                [43.8367, 4.3601],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_2f03e1065458e81c6196caf09fe3d056 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fc8a198113ca9b48383a24f6fd7390c3 = $(`<div id="html_fc8a198113ca9b48383a24f6fd7390c3" style="width: 100.0%; height: 100.0%;">Nîmes (Sud-Est)<br>Population : 150,000 hab.<br>PIB/hab : 29,800 €</div>`)[0];
+                popup_2f03e1065458e81c6196caf09fe3d056.setContent(html_fc8a198113ca9b48383a24f6fd7390c3);
+            
+        
+
+        circle_marker_9d85e580c637597a599aa5a0d71c5293.bindPopup(popup_2f03e1065458e81c6196caf09fe3d056)
+        ;
+
+        
+    
+    
+            var circle_marker_a3bd09a1d4a3d236841b335fde7fbdd2 = L.circleMarker(
+                [45.7667, 4.8794],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_2fd448d28e69bca8a2aa4bfa4ae6ba0f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_34adbbd7722a96f6136a31b00e208b80 = $(`<div id="html_34adbbd7722a96f6136a31b00e208b80" style="width: 100.0%; height: 100.0%;">Villeurbanne (Sud-Est)<br>Population : 149,000 hab.<br>PIB/hab : 35,000 €</div>`)[0];
+                popup_2fd448d28e69bca8a2aa4bfa4ae6ba0f.setContent(html_34adbbd7722a96f6136a31b00e208b80);
+            
+        
+
+        circle_marker_a3bd09a1d4a3d236841b335fde7fbdd2.bindPopup(popup_2fd448d28e69bca8a2aa4bfa4ae6ba0f)
+        ;
+
+        
+    
+    
+            var circle_marker_cb0b8fb2906b2ca1c066392b9254b3bc = L.circleMarker(
+                [45.7772, 3.087],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_a401efdcd0414152dbf21b9859fdd359 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_75b5005697be8f979f0907285076dc75 = $(`<div id="html_75b5005697be8f979f0907285076dc75" style="width: 100.0%; height: 100.0%;">Clermont-Ferrand (Sud-Est)<br>Population : 147,000 hab.<br>PIB/hab : 34,400 €</div>`)[0];
+                popup_a401efdcd0414152dbf21b9859fdd359.setContent(html_75b5005697be8f979f0907285076dc75);
+            
+        
+
+        circle_marker_cb0b8fb2906b2ca1c066392b9254b3bc.bindPopup(popup_a401efdcd0414152dbf21b9859fdd359)
+        ;
+
+        
+    
+    
+            var circle_marker_451b3787fe2787f01d2774464b9cf470 = L.circleMarker(
+                [48.0061, 0.1996],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_29ae9c3c856fd3ebcd6b08aab455c42a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_54a7a169741295142d40f3ff9cc67d33 = $(`<div id="html_54a7a169741295142d40f3ff9cc67d33" style="width: 100.0%; height: 100.0%;">Le Mans (Nord-Ouest)<br>Population : 143,000 hab.<br>PIB/hab : 33,800 €</div>`)[0];
+                popup_29ae9c3c856fd3ebcd6b08aab455c42a.setContent(html_54a7a169741295142d40f3ff9cc67d33);
+            
+        
+
+        circle_marker_451b3787fe2787f01d2774464b9cf470.bindPopup(popup_29ae9c3c856fd3ebcd6b08aab455c42a)
+        ;
+
+        
+    
+    
+            var circle_marker_7daffdd2f52c4756d495b38549bd9357 = L.circleMarker(
+                [43.5297, 5.4474],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_f50f24d7145986fe824cfff986f67fe6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b2f1a3978c2b3ac1de3692d6a6612d8c = $(`<div id="html_b2f1a3978c2b3ac1de3692d6a6612d8c" style="width: 100.0%; height: 100.0%;">Aix-en-Provence (Sud-Est)<br>Population : 143,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_f50f24d7145986fe824cfff986f67fe6.setContent(html_b2f1a3978c2b3ac1de3692d6a6612d8c);
+            
+        
+
+        circle_marker_7daffdd2f52c4756d495b38549bd9357.bindPopup(popup_f50f24d7145986fe824cfff986f67fe6)
+        ;
+
+        
+    
+    
+            var circle_marker_3a49e8509de216f491f7a7c37faaa39c = L.circleMarker(
+                [48.3904, -4.4861],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_fa66279f0552d00eb412bfcc9dc77469 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_856e5f4a0489a264ae4c40bc5077df68 = $(`<div id="html_856e5f4a0489a264ae4c40bc5077df68" style="width: 100.0%; height: 100.0%;">Brest (Nord-Ouest)<br>Population : 139,000 hab.<br>PIB/hab : 32,900 €</div>`)[0];
+                popup_fa66279f0552d00eb412bfcc9dc77469.setContent(html_856e5f4a0489a264ae4c40bc5077df68);
+            
+        
+
+        circle_marker_3a49e8509de216f491f7a7c37faaa39c.bindPopup(popup_fa66279f0552d00eb412bfcc9dc77469)
+        ;
+
+        
+    
+    
+            var circle_marker_5de829e41afb5f6478b8c2b0d16bc9ad = L.circleMarker(
+                [47.3941, 0.6848],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_fd24ec0a6b25091c0aad6987db92685c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_26166ad90589cb39131a22665a4e72ca = $(`<div id="html_26166ad90589cb39131a22665a4e72ca" style="width: 100.0%; height: 100.0%;">Tours (Nord-Ouest)<br>Population : 136,000 hab.<br>PIB/hab : 31,200 €</div>`)[0];
+                popup_fd24ec0a6b25091c0aad6987db92685c.setContent(html_26166ad90589cb39131a22665a4e72ca);
+            
+        
+
+        circle_marker_5de829e41afb5f6478b8c2b0d16bc9ad.bindPopup(popup_fd24ec0a6b25091c0aad6987db92685c)
+        ;
+
+        
+    
+    
+            var circle_marker_0db6d58c12af386b93ab307f7e21cff5 = L.circleMarker(
+                [49.8941, 2.2957],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_ed59a6c7169bb334fa6827eb1596a597 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f2263e60ea69f884133d9bbeec801acd = $(`<div id="html_f2263e60ea69f884133d9bbeec801acd" style="width: 100.0%; height: 100.0%;">Amiens (Nord-Ouest)<br>Population : 133,000 hab.<br>PIB/hab : 28,800 €</div>`)[0];
+                popup_ed59a6c7169bb334fa6827eb1596a597.setContent(html_f2263e60ea69f884133d9bbeec801acd);
+            
+        
+
+        circle_marker_0db6d58c12af386b93ab307f7e21cff5.bindPopup(popup_ed59a6c7169bb334fa6827eb1596a597)
+        ;
+
+        
+    
+    
+            var circle_marker_65ce543f92cf454920ba6037cb2fdd6b = L.circleMarker(
+                [45.8336, 1.2611],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_76d4cf9f82215c9a39e9b897f8ea9301 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1280d942cf829b0e74849c77e1f16963 = $(`<div id="html_1280d942cf829b0e74849c77e1f16963" style="width: 100.0%; height: 100.0%;">Limoges (Sud-Ouest)<br>Population : 131,000 hab.<br>PIB/hab : 30,000 €</div>`)[0];
+                popup_76d4cf9f82215c9a39e9b897f8ea9301.setContent(html_1280d942cf829b0e74849c77e1f16963);
+            
+        
+
+        circle_marker_65ce543f92cf454920ba6037cb2fdd6b.bindPopup(popup_76d4cf9f82215c9a39e9b897f8ea9301)
+        ;
+
+        
+    
+    
+            var circle_marker_0120ef81e2db4e8a305ac24d4cf55251 = L.circleMarker(
+                [45.8992, 6.1294],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_363f6c4393cc04cf1e14e413cb00858c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_09ac0a0446bd3fdd8e18da9f455bf82f = $(`<div id="html_09ac0a0446bd3fdd8e18da9f455bf82f" style="width: 100.0%; height: 100.0%;">Annecy (Sud-Est)<br>Population : 128,000 hab.<br>PIB/hab : 35,900 €</div>`)[0];
+                popup_363f6c4393cc04cf1e14e413cb00858c.setContent(html_09ac0a0446bd3fdd8e18da9f455bf82f);
+            
+        
+
+        circle_marker_0120ef81e2db4e8a305ac24d4cf55251.bindPopup(popup_363f6c4393cc04cf1e14e413cb00858c)
+        ;
+
+        
+    
+    
+            var circle_marker_bcc89c9bbad24f38138ba7ce8f5ddcc3 = L.circleMarker(
+                [42.6887, 2.8948],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_69733a333e5576c0b0df368c5f5a75f4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c8a6283278f7d8a22d0fb88cb1a06a9f = $(`<div id="html_c8a6283278f7d8a22d0fb88cb1a06a9f" style="width: 100.0%; height: 100.0%;">Perpignan (Sud-Ouest)<br>Population : 119,000 hab.<br>PIB/hab : 31,900 €</div>`)[0];
+                popup_69733a333e5576c0b0df368c5f5a75f4.setContent(html_c8a6283278f7d8a22d0fb88cb1a06a9f);
+            
+        
+
+        circle_marker_bcc89c9bbad24f38138ba7ce8f5ddcc3.bindPopup(popup_69733a333e5576c0b0df368c5f5a75f4)
+        ;
+
+        
+    
+    
+            var circle_marker_7a7599ce385a3ec4dcd8d9c0a1150afe = L.circleMarker(
+                [49.1193, 6.1757],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_a0271e93a586844f80292cd926fee1ba = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d3cacc77e56f11471d52914e0c86fd64 = $(`<div id="html_d3cacc77e56f11471d52914e0c86fd64" style="width: 100.0%; height: 100.0%;">Metz (Nord-Est)<br>Population : 116,000 hab.<br>PIB/hab : 32,600 €</div>`)[0];
+                popup_a0271e93a586844f80292cd926fee1ba.setContent(html_d3cacc77e56f11471d52914e0c86fd64);
+            
+        
+
+        circle_marker_7a7599ce385a3ec4dcd8d9c0a1150afe.bindPopup(popup_a0271e93a586844f80292cd926fee1ba)
+        ;
+
+        
+    
+    
+            var circle_marker_1145650c4327f64be6ae6bef8261e6cd = L.circleMarker(
+                [47.9029, 1.9093],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_ad45d17ded70f02c07a8c05e8c261ea1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_eb7853a241c93df35cad50e46fd80dda = $(`<div id="html_eb7853a241c93df35cad50e46fd80dda" style="width: 100.0%; height: 100.0%;">Orléans (Nord-Ouest)<br>Population : 116,000 hab.<br>PIB/hab : 29,200 €</div>`)[0];
+                popup_ad45d17ded70f02c07a8c05e8c261ea1.setContent(html_eb7853a241c93df35cad50e46fd80dda);
+            
+        
+
+        circle_marker_1145650c4327f64be6ae6bef8261e6cd.bindPopup(popup_ad45d17ded70f02c07a8c05e8c261ea1)
+        ;
+
+        
+    
+    
+            var circle_marker_0474376d807280a2a1b5ad0e7e341dd3 = L.circleMarker(
+                [47.7508, 7.3359],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_9466d145ac65b166f1841a2e402ec498 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_46a42bd1f6e4e878d0344762974e857b = $(`<div id="html_46a42bd1f6e4e878d0344762974e857b" style="width: 100.0%; height: 100.0%;">Mulhouse (Nord-Est)<br>Population : 108,000 hab.<br>PIB/hab : 31,900 €</div>`)[0];
+                popup_9466d145ac65b166f1841a2e402ec498.setContent(html_46a42bd1f6e4e878d0344762974e857b);
+            
+        
+
+        circle_marker_0474376d807280a2a1b5ad0e7e341dd3.bindPopup(popup_9466d145ac65b166f1841a2e402ec498)
+        ;
+
+        
+    
+    
+            var circle_marker_2ea1efe49df54f1b17238be7d124eaa8 = L.circleMarker(
+                [49.1829, -0.3707],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_4ef6e75ec8fe08696ab3854595a5a771 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3c29ddbcfc421598aaadc746cfbd27e0 = $(`<div id="html_3c29ddbcfc421598aaadc746cfbd27e0" style="width: 100.0%; height: 100.0%;">Caen (Nord-Ouest)<br>Population : 105,000 hab.<br>PIB/hab : 29,800 €</div>`)[0];
+                popup_4ef6e75ec8fe08696ab3854595a5a771.setContent(html_3c29ddbcfc421598aaadc746cfbd27e0);
+            
+        
+
+        circle_marker_2ea1efe49df54f1b17238be7d124eaa8.bindPopup(popup_4ef6e75ec8fe08696ab3854595a5a771)
+        ;
+
+        
+    
+    
+            var circle_marker_5f41c221240e374ca299766c07612d3a = L.circleMarker(
+                [48.6921, 6.1844],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_208ce7b026adf6a07990042e2928ab20 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a293545a83dc43206b94826b715ebfcd = $(`<div id="html_a293545a83dc43206b94826b715ebfcd" style="width: 100.0%; height: 100.0%;">Nancy (Nord-Est)<br>Population : 104,000 hab.<br>PIB/hab : 31,500 €</div>`)[0];
+                popup_208ce7b026adf6a07990042e2928ab20.setContent(html_a293545a83dc43206b94826b715ebfcd);
+            
+        
+
+        circle_marker_5f41c221240e374ca299766c07612d3a.bindPopup(popup_208ce7b026adf6a07990042e2928ab20)
+        ;
+
+        
+    
+    
+            var circle_marker_b9ec9a4d34fde930270544444157e4c2 = L.circleMarker(
+                [50.7236, 3.1612],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_bfb9c56700e96e031f912b91b8a56317 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d6ba544dd8a2302554709d462f634abc = $(`<div id="html_d6ba544dd8a2302554709d462f634abc" style="width: 100.0%; height: 100.0%;">Tourcoing (Nord-Est)<br>Population : 97,000 hab.<br>PIB/hab : 30,200 €</div>`)[0];
+                popup_bfb9c56700e96e031f912b91b8a56317.setContent(html_d6ba544dd8a2302554709d462f634abc);
+            
+        
+
+        circle_marker_b9ec9a4d34fde930270544444157e4c2.bindPopup(popup_bfb9c56700e96e031f912b91b8a56317)
+        ;
+
+        
+    
+    
+            var circle_marker_5ef36503b106030f66b649dcdd5fc979 = L.circleMarker(
+                [50.6927, 3.1746],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_755326f176e3d611beeead0fea980900 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fd090e698a6894d7628587421359f157 = $(`<div id="html_fd090e698a6894d7628587421359f157" style="width: 100.0%; height: 100.0%;">Roubaix (Nord-Est)<br>Population : 96,000 hab.<br>PIB/hab : 28,000 €</div>`)[0];
+                popup_755326f176e3d611beeead0fea980900.setContent(html_fd090e698a6894d7628587421359f157);
+            
+        
+
+        circle_marker_5ef36503b106030f66b649dcdd5fc979.bindPopup(popup_755326f176e3d611beeead0fea980900)
+        ;
+
+        
+    
+    
+            var circle_marker_5c3e9d5ab48557988c176aded573f9ba = L.circleMarker(
+                [43.9493, 4.8055],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_a4e9e4d9cbfa880ad9d94e76d2727d42 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f165349c18437c313c7153b6fb3bc09a = $(`<div id="html_f165349c18437c313c7153b6fb3bc09a" style="width: 100.0%; height: 100.0%;">Avignon (Sud-Est)<br>Population : 92,000 hab.<br>PIB/hab : 34,400 €</div>`)[0];
+                popup_a4e9e4d9cbfa880ad9d94e76d2727d42.setContent(html_f165349c18437c313c7153b6fb3bc09a);
+            
+        
+
+        circle_marker_5c3e9d5ab48557988c176aded573f9ba.bindPopup(popup_a4e9e4d9cbfa880ad9d94e76d2727d42)
+        ;
+
+        
+    
+    
+            var circle_marker_b88620aca2bf4495375b6c1c5ecd9b40 = L.circleMarker(
+                [48.7904, 2.4556],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_4c31e36c3b46cfae0db9583d58af49c7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_504225b8a394967edebfbe95b56a4c2a = $(`<div id="html_504225b8a394967edebfbe95b56a4c2a" style="width: 100.0%; height: 100.0%;">Créteil (Nord-Ouest)<br>Population : 91,000 hab.<br>PIB/hab : 56,500 €</div>`)[0];
+                popup_4c31e36c3b46cfae0db9583d58af49c7.setContent(html_504225b8a394967edebfbe95b56a4c2a);
+            
+        
+
+        circle_marker_b88620aca2bf4495375b6c1c5ecd9b40.bindPopup(popup_4c31e36c3b46cfae0db9583d58af49c7)
+        ;
+
+        
+    
+    
+            var circle_marker_2a16c2098015206eff0844937e91b692 = L.circleMarker(
+                [46.5802, 0.3404],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_144788bc232b35deeedc1deecaf656e5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8d6a2ed198b0e2a45fdcedc66c4c0de9 = $(`<div id="html_8d6a2ed198b0e2a45fdcedc66c4c0de9" style="width: 100.0%; height: 100.0%;">Poitiers (Sud-Ouest)<br>Population : 88,000 hab.<br>PIB/hab : 32,200 €</div>`)[0];
+                popup_144788bc232b35deeedc1deecaf656e5.setContent(html_8d6a2ed198b0e2a45fdcedc66c4c0de9);
+            
+        
+
+        circle_marker_2a16c2098015206eff0844937e91b692.bindPopup(popup_144788bc232b35deeedc1deecaf656e5)
+        ;
+
+        
+    
+    
+            var circle_marker_b9bb4131a52386c55c4f990329a832b4 = L.circleMarker(
+                [48.8014, 2.1301],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_59ccd5eed37d1a418e588d92d5018bf1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3fde724a172595dc8d8c2e965fbd18b3 = $(`<div id="html_3fde724a172595dc8d8c2e965fbd18b3" style="width: 100.0%; height: 100.0%;">Versailles (Nord-Ouest)<br>Population : 85,000 hab.<br>PIB/hab : 55,300 €</div>`)[0];
+                popup_59ccd5eed37d1a418e588d92d5018bf1.setContent(html_3fde724a172595dc8d8c2e965fbd18b3);
+            
+        
+
+        circle_marker_b9bb4131a52386c55c4f990329a832b4.bindPopup(popup_59ccd5eed37d1a418e588d92d5018bf1)
+        ;
+
+        
+    
+    
+            var circle_marker_b37135c85dae5ae551852b2bf6fbff08 = L.circleMarker(
+                [43.3444, 3.2158],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_d4241a77b2dde0e9b5c8d3a43dcde8a7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_667fab640b7147a4555d184b4c2b354e = $(`<div id="html_667fab640b7147a4555d184b4c2b354e" style="width: 100.0%; height: 100.0%;">Béziers (Sud-Est)<br>Population : 79,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_d4241a77b2dde0e9b5c8d3a43dcde8a7.setContent(html_667fab640b7147a4555d184b4c2b354e);
+            
+        
+
+        circle_marker_b37135c85dae5ae551852b2bf6fbff08.bindPopup(popup_d4241a77b2dde0e9b5c8d3a43dcde8a7)
+        ;
+
+        
+    
+    
+            var circle_marker_270dcb6f9fb19b55aa5d0c989cddf1ad = L.circleMarker(
+                [49.6337, -1.6222],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_e9b6fb31cccd34c77c5d7a0fac37ab7d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_467c7630d7f535de426abd68dc2ef6f9 = $(`<div id="html_467c7630d7f535de426abd68dc2ef6f9" style="width: 100.0%; height: 100.0%;">Cherbourg-en-Cotentin (Nord-Ouest)<br>Population : 78,000 hab.<br>PIB/hab : 31,000 €</div>`)[0];
+                popup_e9b6fb31cccd34c77c5d7a0fac37ab7d.setContent(html_467c7630d7f535de426abd68dc2ef6f9);
+            
+        
+
+        circle_marker_270dcb6f9fb19b55aa5d0c989cddf1ad.bindPopup(popup_e9b6fb31cccd34c77c5d7a0fac37ab7d)
+        ;
+
+        
+    
+    
+            var circle_marker_4fca7ee72a5ea2b591cdd1b88dd52dcf = L.circleMarker(
+                [43.2951, -0.3708],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_fd771afa04e9827c1064d911b2a8cf14 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d547ff78fd2749b17e610d86b19f9d9e = $(`<div id="html_d547ff78fd2749b17e610d86b19f9d9e" style="width: 100.0%; height: 100.0%;">Pau (Sud-Ouest)<br>Population : 77,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_fd771afa04e9827c1064d911b2a8cf14.setContent(html_d547ff78fd2749b17e610d86b19f9d9e);
+            
+        
+
+        circle_marker_4fca7ee72a5ea2b591cdd1b88dd52dcf.bindPopup(popup_fd771afa04e9827c1064d911b2a8cf14)
+        ;
+
+        
+    
+    
+            var circle_marker_4ec0422cb79d198e344ee325e9a60369 = L.circleMarker(
+                [46.1603, -1.1511],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_d39708ca7ae53cc35403476e42490e87 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3feb5cf104b2936815a6aff3fc14c6a5 = $(`<div id="html_3feb5cf104b2936815a6aff3fc14c6a5" style="width: 100.0%; height: 100.0%;">La Rochelle (Sud-Ouest)<br>Population : 76,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_d39708ca7ae53cc35403476e42490e87.setContent(html_3feb5cf104b2936815a6aff3fc14c6a5);
+            
+        
+
+        circle_marker_4ec0422cb79d198e344ee325e9a60369.bindPopup(popup_d39708ca7ae53cc35403476e42490e87)
+        ;
+
+        
+    
+    
+            var circle_marker_d1a951ace699357eac65e49a46e0c01a = L.circleMarker(
+                [48.0794, 7.3585],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_d8f08c6b0ea878c92a362487526f40cd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0831a582aab24d1cb6fa671b48962581 = $(`<div id="html_0831a582aab24d1cb6fa671b48962581" style="width: 100.0%; height: 100.0%;">Colmar (Nord-Est)<br>Population : 70,000 hab.<br>PIB/hab : 34,000 €</div>`)[0];
+                popup_d8f08c6b0ea878c92a362487526f40cd.setContent(html_0831a582aab24d1cb6fa671b48962581);
+            
+        
+
+        circle_marker_d1a951ace699357eac65e49a46e0c01a.bindPopup(popup_d8f08c6b0ea878c92a362487526f40cd)
+        ;
+
+        
+    
+    
+            var circle_marker_1346ddcf456e37ac88511f892258b341 = L.circleMarker(
+                [44.9334, 4.8924],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_3ed797ec5d4597426461233b29e84ed9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_62afead4360f8295c874eff507de5098 = $(`<div id="html_62afead4360f8295c874eff507de5098" style="width: 100.0%; height: 100.0%;">Valence (Sud-Est)<br>Population : 64,000 hab.<br>PIB/hab : 34,500 €</div>`)[0];
+                popup_3ed797ec5d4597426461233b29e84ed9.setContent(html_62afead4360f8295c874eff507de5098);
+            
+        
+
+        circle_marker_1346ddcf456e37ac88511f892258b341.bindPopup(popup_3ed797ec5d4597426461233b29e84ed9)
+        ;
+
+        
+    
+    
+            var circle_marker_fe5848f313912971336429755b8a5865 = L.circleMarker(
+                [47.996, -4.0972],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_31939976452b4ae6ce84a69142254f7f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f268b1c12bea8855baee0f153d15e737 = $(`<div id="html_f268b1c12bea8855baee0f153d15e737" style="width: 100.0%; height: 100.0%;">Quimper (Nord-Ouest)<br>Population : 63,000 hab.<br>PIB/hab : 33,300 €</div>`)[0];
+                popup_31939976452b4ae6ce84a69142254f7f.setContent(html_f268b1c12bea8855baee0f153d15e737);
+            
+        
+
+        circle_marker_fe5848f313912971336429755b8a5865.bindPopup(popup_31939976452b4ae6ce84a69142254f7f)
+        ;
+
+        
+    
+    
+            var circle_marker_d92324df4d415f22f5d892ce4c3914ee = L.circleMarker(
+                [48.2973, 4.0744],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_b117fe5b4da2aac881ade673581beb31 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0b525ba149c379d954630f8e5c71607b = $(`<div id="html_0b525ba149c379d954630f8e5c71607b" style="width: 100.0%; height: 100.0%;">Troyes (Nord-Est)<br>Population : 61,000 hab.<br>PIB/hab : 32,400 €</div>`)[0];
+                popup_b117fe5b4da2aac881ade673581beb31.setContent(html_0b525ba149c379d954630f8e5c71607b);
+            
+        
+
+        circle_marker_d92324df4d415f22f5d892ce4c3914ee.bindPopup(popup_b117fe5b4da2aac881ade673581beb31)
+        ;
+
+        
+    
+    
+            var circle_marker_03be71001d8bfaa3e4876f7ffe0ee477 = L.circleMarker(
+                [45.5646, 5.9178],
+                {"bubblingMouseEvents": true, "color": "#8A5C2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A5C2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_e1480b043b1ff75518d59f6708373be4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b0e5dafbb7d85a361177816caddbed82 = $(`<div id="html_b0e5dafbb7d85a361177816caddbed82" style="width: 100.0%; height: 100.0%;">Chambéry (Sud-Est)<br>Population : 59,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_e1480b043b1ff75518d59f6708373be4.setContent(html_b0e5dafbb7d85a361177816caddbed82);
+            
+        
+
+        circle_marker_03be71001d8bfaa3e4876f7ffe0ee477.bindPopup(popup_e1480b043b1ff75518d59f6708373be4)
+        ;
+
+        
+    
+    
+            var circle_marker_fcfa23dcafa47783e81baccb6182b18f = L.circleMarker(
+                [46.3237, -0.4583],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_f760ec237f1d4702af566e4d707bae60 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8b6d375478626d9a9669d0be545a0665 = $(`<div id="html_8b6d375478626d9a9669d0be545a0665" style="width: 100.0%; height: 100.0%;">Niort (Sud-Ouest)<br>Population : 58,000 hab.<br>PIB/hab : 35,200 €</div>`)[0];
+                popup_f760ec237f1d4702af566e4d707bae60.setContent(html_8b6d375478626d9a9669d0be545a0665);
+            
+        
+
+        circle_marker_fcfa23dcafa47783e81baccb6182b18f.bindPopup(popup_f760ec237f1d4702af566e4d707bae60)
+        ;
+
+        
+    
+    
+            var circle_marker_8fc5dd573e0695f027e88923f55fc084 = L.circleMarker(
+                [47.6582, -2.7608],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_43eda957dfd828d57cbb16c1d45159c8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4fac383bc8b887b15627517de426c923 = $(`<div id="html_4fac383bc8b887b15627517de426c923" style="width: 100.0%; height: 100.0%;">Vannes (Nord-Ouest)<br>Population : 53,000 hab.<br>PIB/hab : 33,200 €</div>`)[0];
+                popup_43eda957dfd828d57cbb16c1d45159c8.setContent(html_4fac383bc8b887b15627517de426c923);
+            
+        
+
+        circle_marker_8fc5dd573e0695f027e88923f55fc084.bindPopup(popup_43eda957dfd828d57cbb16c1d45159c8)
+        ;
+
+        
+    
+    
+            var circle_marker_c3b30b23b0ab0f1db36c1b2d4daffa1f = L.circleMarker(
+                [43.4929, -1.4748],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_8f964b7d8363da400aff179593578edb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5cdaa63f3634935b163e8cf3b53875d6 = $(`<div id="html_5cdaa63f3634935b163e8cf3b53875d6" style="width: 100.0%; height: 100.0%;">Bayonne (Sud-Ouest)<br>Population : 51,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_8f964b7d8363da400aff179593578edb.setContent(html_5cdaa63f3634935b163e8cf3b53875d6);
+            
+        
+
+        circle_marker_c3b30b23b0ab0f1db36c1b2d4daffa1f.bindPopup(popup_8f964b7d8363da400aff179593578edb)
+        ;
+
+        
+    
+    
+            var circle_marker_a698ae1d6b486468f32f9fd82cac46cf = L.circleMarker(
+                [48.0698, -0.77],
+                {"bubblingMouseEvents": true, "color": "#2A5C8A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2A5C8A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_c80dd2865256c34005b66c655a068c37 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ee5a1532f8b86300a1e73fdf31e7005b = $(`<div id="html_ee5a1532f8b86300a1e73fdf31e7005b" style="width: 100.0%; height: 100.0%;">Laval (Nord-Ouest)<br>Population : 117,500 hab.<br>PIB/hab : 33,800 €</div>`)[0];
+                popup_c80dd2865256c34005b66c655a068c37.setContent(html_ee5a1532f8b86300a1e73fdf31e7005b);
+            
+        
+
+        circle_marker_a698ae1d6b486468f32f9fd82cac46cf.bindPopup(popup_c80dd2865256c34005b66c655a068c37)
+        ;
+
+        
+    
+    
+            var circle_marker_2d302379cdbee127965f4c24b97db0a4 = L.circleMarker(
+                [43.9298, 2.148],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_f7fb4250e335f3944819d80d7a72f2ab = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ea03f0bf6c7f52137fc4c017daa579b8 = $(`<div id="html_ea03f0bf6c7f52137fc4c017daa579b8" style="width: 100.0%; height: 100.0%;">Albi (Sud-Ouest)<br>Population : 49,000 hab.<br>PIB/hab : 32,400 €</div>`)[0];
+                popup_f7fb4250e335f3944819d80d7a72f2ab.setContent(html_ea03f0bf6c7f52137fc4c017daa579b8);
+            
+        
+
+        circle_marker_2d302379cdbee127965f4c24b97db0a4.bindPopup(popup_f7fb4250e335f3944819d80d7a72f2ab)
+        ;
+
+        
+    
+    
+            var circle_marker_24979d3026510e9f2db7759f70a016d1 = L.circleMarker(
+                [47.6379, 6.8629],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_c7ab2bf6b5dd0aa1520e2e1d808372e9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_06649236b9460a945d10168c8d737c33 = $(`<div id="html_06649236b9460a945d10168c8d737c33" style="width: 100.0%; height: 100.0%;">Belfort (Nord-Est)<br>Population : 47,000 hab.<br>PIB/hab : 31,000 €</div>`)[0];
+                popup_c7ab2bf6b5dd0aa1520e2e1d808372e9.setContent(html_06649236b9460a945d10168c8d737c33);
+            
+        
+
+        circle_marker_24979d3026510e9f2db7759f70a016d1.bindPopup(popup_c7ab2bf6b5dd0aa1520e2e1d808372e9)
+        ;
+
+        
+    
+    
+            var circle_marker_0fff59b1676cc4c516f0f7117d720ec9 = L.circleMarker(
+                [49.7716, 4.7199],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_31432d4209f4bdc4c4ce7ee0fecc825f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f7bd4a54b4b582137c948ba1d86f434e = $(`<div id="html_f7bd4a54b4b582137c948ba1d86f434e" style="width: 100.0%; height: 100.0%;">Charleville-Mézières (Nord-Est)<br>Population : 117,500 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_31432d4209f4bdc4c4ce7ee0fecc825f.setContent(html_f7bd4a54b4b582137c948ba1d86f434e);
+            
+        
+
+        circle_marker_0fff59b1676cc4c516f0f7117d720ec9.bindPopup(popup_31432d4209f4bdc4c4ce7ee0fecc825f)
+        ;
+
+        
+    
+    
+            var circle_marker_3ec2a53e4495eb2192f6e114f517920b = L.circleMarker(
+                [46.8107, 1.6911],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_4bb57cfc8525cebe10200164afa7e359 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_35140d89409148d50217ee2fbd35cdad = $(`<div id="html_35140d89409148d50217ee2fbd35cdad" style="width: 100.0%; height: 100.0%;">Châteauroux (Sud-Ouest)<br>Population : 43,000 hab.<br>PIB/hab : 30,600 €</div>`)[0];
+                popup_4bb57cfc8525cebe10200164afa7e359.setContent(html_35140d89409148d50217ee2fbd35cdad);
+            
+        
+
+        circle_marker_3ec2a53e4495eb2192f6e114f517920b.bindPopup(popup_4bb57cfc8525cebe10200164afa7e359)
+        ;
+
+        
+    
+    
+            var circle_marker_29d69aff3226bf5093be121bcf306871 = L.circleMarker(
+                [44.2049, 0.6212],
+                {"bubblingMouseEvents": true, "color": "#5C8A2A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C8A2A", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_ecc6c040e0a2a1307373cec01cd87065 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5092dc3790f15d75ea01139a0ffed3d5 = $(`<div id="html_5092dc3790f15d75ea01139a0ffed3d5" style="width: 100.0%; height: 100.0%;">Agen (Sud-Ouest)<br>Population : 33,000 hab.<br>PIB/hab : 33,400 €</div>`)[0];
+                popup_ecc6c040e0a2a1307373cec01cd87065.setContent(html_5092dc3790f15d75ea01139a0ffed3d5);
+            
+        
+
+        circle_marker_29d69aff3226bf5093be121bcf306871.bindPopup(popup_ecc6c040e0a2a1307373cec01cd87065)
+        ;
+
+        
+    
+    
+            var circle_marker_f7a8ec221cf59977875a92fdc368af7f = L.circleMarker(
+                [47.7982, 3.5728],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_d873eee77bc34b68202d749cd8f4ab75 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ef957763518cd0006514c8483007ef4b = $(`<div id="html_ef957763518cd0006514c8483007ef4b" style="width: 100.0%; height: 100.0%;">Auxerre (Nord-Est)<br>Population : 33,000 hab.<br>PIB/hab : 32,800 €</div>`)[0];
+                popup_d873eee77bc34b68202d749cd8f4ab75.setContent(html_ef957763518cd0006514c8483007ef4b);
+            
+        
+
+        circle_marker_f7a8ec221cf59977875a92fdc368af7f.bindPopup(popup_d873eee77bc34b68202d749cd8f4ab75)
+        ;
+
+        
+    
+    
+            var circle_marker_54eba2d6c9291b0921dd9e4b8b833650 = L.circleMarker(
+                [48.1735, 6.45],
+                {"bubblingMouseEvents": true, "color": "#8A2A5C", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8A2A5C", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_716790bef75e10825495aab155030412);
+        
+    
+        var popup_e247b1330f7972d2e95788785c0cae25 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b38b9e3f9dedabd9f65d11fabb40e744 = $(`<div id="html_b38b9e3f9dedabd9f65d11fabb40e744" style="width: 100.0%; height: 100.0%;">Épinal (Nord-Est)<br>Population : 31,000 hab.<br>PIB/hab : 33,000 €</div>`)[0];
+                popup_e247b1330f7972d2e95788785c0cae25.setContent(html_b38b9e3f9dedabd9f65d11fabb40e744);
+            
+        
+
+        circle_marker_54eba2d6c9291b0921dd9e4b8b833650.bindPopup(popup_e247b1330f7972d2e95788785c0cae25)
+        ;
+
+        
+    
+</script>
+</html>

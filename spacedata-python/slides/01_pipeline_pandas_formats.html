@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="fr" data-accent="blue">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Séance 1 — Pipeline data, pandas &amp; formats de géodonnées</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="slide-counter" id="counter"></div>
+<div class="nav-hint">↑ ↓ naviguer · F plein écran</div>
+<div class="nav-buttons"><button id="prevBtn" aria-label="Précédent">‹</button><button id="nextBtn" aria-label="Suivant">›</button></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. TITRE -->
+  <section class="slide slide--title">
+    <div class="slide-content">
+      <div class="module-name">MSc SpaceData — IPSA / EPITA — Python avancé pour le traitement de données spatiales</div>
+      <div class="kicker">Séance 1 / 6</div>
+      <h1 class="title">Pipeline data, pandas &amp; formats de géodonnées</h1>
+      <p class="subtitle">Panorama du pipeline data, rappels pandas, et comparaison des formats CSV / JSON / GeoJSON / Parquet.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><strong>2h</strong> cours magistral</div>
+        <div class="meta-chip">suivi de <strong>2h</strong> de TP</div>
+        <div class="meta-chip">TP : <code style="color:var(--accent)">01_pandas_formats_geodata.ipynb</code></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>Séance 1</span></div>
+  </section>
+
+  <!-- 2. AGENDA -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Au programme</div>
+      <h2 class="title">Ce qu'on va voir aujourd'hui</h2>
+      <ul class="timeline">
+        <li><span class="time">15 min</span><span class="label"><strong>Introduction du module</strong><span class="muted"> — les 6 séances, le projet fil rouge, les outils</span></span></li>
+        <li><span class="time">20 min</span><span class="label"><strong>Le pipeline data</strong><span class="muted"> — collecte, validation, transformation, exploitation</span></span></li>
+        <li><span class="time">55 min</span><span class="label"><strong>Rappels pandas</strong><span class="muted"> — doc, index, <code>.loc</code>/<code>.iloc</code>, exploration, valeurs manquantes, <code>value_counts</code>, jointures, filtrage, tri, groupby</span></span></li>
+        <li><span class="time">35 min</span><span class="label"><strong>Formats de géodonnées</strong><span class="muted"> — CSV, JSON, GeoJSON, Parquet, notion de CRS, fidélité à la relecture</span></span></li>
+        <li><span class="time">25 min</span><span class="label"><strong>Visualisation</strong><span class="muted"> — folium, limites de <code>.plot()</code>, Plotly</span></span></li>
+        <li><span class="time">5 min</span><span class="label"><strong>Transition</strong><span class="muted"> — lancement du TP</span></span></li>
+      </ul>
+      <p class="callout" style="margin-top:1.4rem;">Séance volontairement dense : certains exemples peuvent être parcourus rapidement à l'oral et laissés en lecture autonome dans le support.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>2 / 42</span></div>
+  </section>
+
+  <!-- 3. INTRO MODULE : les 6 séances -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Introduction</div>
+      <h2 class="title">Un module en 6 séances</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Séance</th><th>Cours</th><th>TP</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1</strong></td><td>Pipeline data, pandas, formats</td><td>Explorer &amp; exporter un jeu de données spatial</td></tr>
+            <tr><td><strong>2</strong></td><td>APIs, HTTP, authentification</td><td>Micro-API FastAPI + API publique USGS</td></tr>
+            <tr><td><strong>3</strong></td><td>DuckDB &amp; SQL analytique</td><td>Requêtes SQL sur DataFrames &amp; Parquet</td></tr>
+            <tr><td><strong>4</strong></td><td>APIs spatiales (Copernicus, NASA)</td><td>Catalogues STAC &amp; CMR</td></tr>
+            <tr><td><strong>5-6</strong></td><td colspan="2"><strong>Projet fil rouge</strong> — pipeline complet, support de l'évaluation</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><strong>À retenir :</strong> chaque séance construit une brique que vous réutiliserez telle quelle dans le projet fil rouge des séances 5 et 6.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>3 / 42</span></div>
+  </section>
+
+  <!-- 4. SECTION 1 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">01</div>
+      <h2 class="title">Le pipeline data</h2>
+      <p class="subtitle">De la donnée brute à la donnée exploitable : les quatre étapes qu'on va suivre tout au long du module.</p>
+    </div>
+  </section>
+
+  <!-- 5. PIPELINE DIAGRAM -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le pipeline data</div>
+      <h2 class="title">Quatre étapes, toujours les mêmes</h2>
+      <div class="diagram-flow">
+        <div class="diagram-node">
+          <div class="node-icon">📥</div>
+          <div class="node-title">Collecte</div>
+          <div class="node-desc">Récupérer la donnée brute : fichier, API, capteur...</div>
+        </div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-node">
+          <div class="node-icon">🔍</div>
+          <div class="node-title">Validation</div>
+          <div class="node-desc">Types corrects ? Valeurs manquantes ? Aberrantes ?</div>
+        </div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-node">
+          <div class="node-icon">⚙️</div>
+          <div class="node-title">Transformation</div>
+          <div class="node-desc">Nettoyer, agréger, croiser avec d'autres sources</div>
+        </div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-node">
+          <div class="node-icon">📊</div>
+          <div class="node-title">Exploitation</div>
+          <div class="node-desc">Export, visualisation, interprétation</div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.6rem;"><strong>Aujourd'hui :</strong> on se concentre sur la <strong>collecte</strong> et un peu de <strong>transformation</strong>. La validation en profondeur arrive en séance 5-6.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>5 / 42</span></div>
+  </section>
+
+  <!-- 6. EXEMPLES SPATIAUX -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le pipeline data — en contexte spatial</div>
+      <h2 class="title">À quoi ça ressemble avec de la donnée spatiale ?</h2>
+      <div class="example-grid">
+        <div class="example-card">
+          <div class="example-title"><span class="example-icon">🏃</span> Trace GPS</div>
+          <ul>
+            <li><span class="step-label">Collecte</span>On exporte le fichier GPX ou GeoJSON généré par l'application de suivi (Strava, Garmin...).</li>
+            <li><span class="step-label">Validation</span>On vérifie que chaque point a une latitude entre -90 et 90 et une longitude entre -180 et 180.</li>
+            <li><span class="step-label">Transformation</span>On calcule la vitesse et la distance parcourue entre deux points consécutifs.</li>
+            <li><span class="step-label">Exploitation</span>On affiche le trajet complet sur une carte interactive.</li>
+          </ul>
+        </div>
+        <div class="example-card">
+          <div class="example-title"><span class="example-icon">🛰️</span> Image satellite</div>
+          <ul>
+            <li><span class="step-label">Collecte</span>On interroge un catalogue STAC (Copernicus, NASA) pour trouver les scènes disponibles sur la zone.</li>
+            <li><span class="step-label">Validation</span>On vérifie le taux de couverture nuageuse : au-delà de 20-30 %, l'image devient inexploitable.</li>
+            <li><span class="step-label">Transformation</span>On reprojette l'image dans le CRS souhaité, puis on la découpe sur la zone d'intérêt.</li>
+            <li><span class="step-label">Exploitation</span>On calcule un indice de végétation (NDVI) à partir des bandes spectrales.</li>
+          </ul>
+        </div>
+        <div class="example-card">
+          <div class="example-title"><span class="example-icon">📡</span> Capteur IoT</div>
+          <ul>
+            <li><span class="step-label">Collecte</span>On appelle l'API REST exposée par le fabricant du capteur pour récupérer ses dernières mesures.</li>
+            <li><span class="step-label">Validation</span>On détecte les capteurs hors service (valeurs figées, horodatages manquants) avant d'utiliser les données.</li>
+            <li><span class="step-label">Transformation</span>On agrège les mesures brutes, souvent prises chaque seconde, en moyennes horaires exploitables.</li>
+            <li><span class="step-label">Exploitation</span>On déclenche une alerte automatique si une mesure dépasse un seuil critique.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>6 / 42</span></div>
+  </section>
+
+  <!-- 7. SECTION 2 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">02</div>
+      <h2 class="title">Rappels pandas</h2>
+      <p class="subtitle">Les réflexes à avoir dès qu'on ouvre un nouveau jeu de données.</p>
+    </div>
+  </section>
+
+  <!-- 8. SERIES / DATAFRAME -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Series &amp; DataFrame</h2>
+      <div class="two-col">
+        <div>
+          <div class="col-title">Series</div>
+          <p style="color:var(--ink-secondary); line-height:1.5; font-size:0.92rem;">Un tableau <strong style="color:var(--ink-primary)">à une dimension</strong>, indexé — comme une colonne Excel avec des étiquettes de ligne.</p>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">temperatures = pd.Series(
+    [12.4, 15.1, 18.7, 10.2, 11.8],
+    index=["Paris", "Lyon", "Marseille",
+           "Lille", "Brest"],
+    name="temperature_c",
+)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">DataFrame</div>
+          <p style="color:var(--ink-secondary); line-height:1.5; font-size:0.92rem;">Un tableau <strong style="color:var(--ink-primary)">à deux dimensions</strong> — plusieurs Series alignées sur le même index. C'est l'objet qu'on manipule 95 % du temps.</p>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="muted" style="color:var(--ink-muted); font-size:0.82rem; margin:1rem 0 0.4rem;">Aperçu de la Series <code>temperatures</code> ci-dessus :</p>
+      <div class="console-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text">Paris        12.4
+Lyon         15.1
+Marseille    18.7
+Lille        10.2
+Brest        11.8
+Name: temperature_c, dtype: float64</code></pre>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>8 / 42</span></div>
+  </section>
+
+  <!-- 9. LIRE LA DOC -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Lire la documentation d'une fonction</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Chaque exemple de ce cours n'illustre qu'un usage parmi beaucoup d'autres. Avant d'utiliser une fonction, prenez le réflexe de regarder sa signature complète.</p>
+      <div class="doc-hint-row">
+        <div class="doc-hint"><code>?pd.DataFrame.sort_values</code><span class="doc-hint-label">Dans Jupyter : ouvre la docstring dans un panneau</span></div>
+        <div class="doc-hint"><code>help(pd.merge)</code><span class="doc-hint-label">Dans un script Python classique</span></div>
+        <div class="doc-hint"><code>Shift + Tab</code><span class="doc-hint-label">Survolez une fonction dans une cellule pour un aperçu rapide</span></div>
+      </div>
+      <div class="code-window" style="margin-top:1.1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">signature complète (extrait)</span></div>
+        <pre><code data-lang="python">df.sort_values(
+    by, *, axis=0, ascending=True,
+    inplace=False, kind="quicksort",
+    na_position="last", ignore_index=False,
+    key=None,
+)</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1rem;">On n'utilise souvent que <code>by</code> et <code>ascending</code> — mais le reste existe, et <code>na_position</code> peut vous éviter une mauvaise surprise le jour où vos données contiennent des valeurs manquantes.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>9 / 42</span></div>
+  </section>
+
+  <!-- 10. INDEX CONCEPT -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">L'index : l'essence du DataFrame</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Chaque ligne porte une étiquette — l'index. Par défaut, c'est une suite d'entiers, mais ce n'est qu'un choix parmi d'autres.</p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.index</code></pre>
+        </div>
+        <div class="console-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+          <pre><code data-lang="text">[0, 1, 2, 3, 4, 5]</code></pre>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">L'index n'est pas qu'un numéro de ligne : c'est ce qui permet d'<strong>aligner</strong>, de <strong>fusionner</strong> et de <strong>sélectionner</strong> des données de façon fiable — tout ce qu'on va voir ensuite s'appuie dessus.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>10 / 42</span></div>
+  </section>
+
+  <!-- 11. LOC vs ILOC -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">.loc</code> vs <code style="color:var(--accent)">.iloc</code></h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">.loc — par étiquette</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.loc[2, "ville"]</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">'Marseille'</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">.iloc — par position</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.set_index("ville", inplace=True)
+stations.iloc[2, 0]</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">'Marseille'</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;">Avec l'index par défaut, étiquette et position coïncident. Mais dès que l'index change (tri, filtre, <code>set_index</code>...), seul <code>.loc</code> reste fiable pour retrouver une ligne par son <strong>étiquette</strong> d'origine.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>11 / 42</span></div>
+  </section>
+
+  <!-- 12. SET_INDEX / RESET_INDEX -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">set_index()</code> &amp; <code style="color:var(--accent)">reset_index()</code></h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille", "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations_idx = stations.set_index("ville")
+stations_idx.loc["Marseille"]</code></pre>
+      </div>
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text">temperature_c    18.7
+humidite_pct       55
+Name: Marseille, dtype: object</code></pre>
+      </div>
+      <div class="code-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python"># ... et pour revenir à un index numérique classique :
+stations_idx.reset_index()
+stations.iloc[2, 0]</code></pre>
+      </div>
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text">'Marseille'</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1rem;"><code>set_index()</code> rend les lignes accessibles par un nom explicite plutôt qu'un numéro ; <code>reset_index()</code> fait l'inverse. On recroisera <code>reset_index()</code> juste après avec les résultats de <code>groupby()</code>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>12 / 42</span></div>
+  </section>
+
+  <!-- 13. head() -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">head()</code> — un aperçu rapide</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.head()</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table class="cmp">
+            <thead><tr><th></th><th>ville</th><th>temperature_c</th><th>humidite_pct</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>Paris</td><td>12.4</td><td>78</td></tr>
+              <tr><td>1</td><td>Lyon</td><td>15.1</td><td>65</td></tr>
+              <tr><td>2</td><td>Marseille</td><td>18.7</td><td>55</td></tr>
+              <tr><td>3</td><td>Lille</td><td>10.2</td><td>82</td></tr>
+              <tr><td>4</td><td>Brest</td><td>11.8</td><td>88</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">Par défaut, <code>head()</code> affiche les <strong>5 premières lignes</strong> — ici tout le DataFrame, puisqu'il n'en contient que 5.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>13 / 42</span></div>
+  </section>
+
+  <!-- 14. info() -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">info()</code> — types &amp; valeurs manquantes</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.info()</code></pre>
+        </div>
+        <div class="console-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+          <pre><code data-lang="text">&lt;class 'pandas.DataFrame'&gt;
+RangeIndex: 5 entries, 0 to 4
+Data columns (total 3 columns):
+ #   Column         Non-Null  Dtype
+ 0   ville          5         object
+ 1   temperature_c  5         float64
+ 2   humidite_pct   5         int64</code></pre>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><strong>Non-Null = 5</strong> sur chaque colonne : aucune valeur manquante ici. Ce sera rarement aussi propre avec de la vraie donnée !</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>14 / 42</span></div>
+  </section>
+
+  <!-- 15. describe() -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">describe()</code> — statistiques descriptives</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+stations.describe()</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table class="cmp">
+            <thead><tr><th></th><th>temperature_c</th><th>humidite_pct</th></tr></thead>
+            <tbody>
+              <tr><td>count</td><td>5.0</td><td>5.0</td></tr>
+              <tr><td>mean</td><td>13.64</td><td>73.6</td></tr>
+              <tr><td>std</td><td>3.34</td><td>13.39</td></tr>
+              <tr><td>min</td><td>10.2</td><td>55.0</td></tr>
+              <tr><td>25%</td><td>11.8</td><td>65.0</td></tr>
+              <tr><td>50%</td><td>12.4</td><td>78.0</td></tr>
+              <tr><td>75%</td><td>15.1</td><td>82.0</td></tr>
+              <tr><td>max</td><td>18.7</td><td>88.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><code>describe()</code> ignore automatiquement les colonnes non numériques comme <code>ville</code>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>15 / 42</span></div>
+  </section>
+
+  <!-- 16. FILTRER PLUSIEURS CRITERES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Filtrer sur plusieurs critères</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille", "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+
+# ET : chaudes ET humides
+stations[(stations["temperature_c"] > 12) & (stations["humidite_pct"] > 70)]
+
+# OU : sèches OU chaudes
+stations[(stations["humidite_pct"] < 60) | (stations["temperature_c"] > 15)]
+
+# NÉGATION : tout sauf Paris
+stations[~(stations["ville"] == "Paris")]</code></pre>
+      </div>
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table class="cmp">
+          <thead><tr><th></th><th>ville</th><th>temperature_c</th><th>humidite_pct</th></tr></thead>
+          <tbody><tr><td>0</td><td>Paris</td><td>12.4</td><td>78</td></tr></tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1rem;"><strong>&amp;</strong> = ET, <strong>|</strong> = OU, <strong>~</strong> = négation — et on parenthèse <strong>toujours</strong> chaque condition individuellement.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>16 / 42</span></div>
+  </section>
+
+    <!-- 17. TRIER PLUSIEURS COLONNES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Trier sur plusieurs colonnes</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">produits = pd.DataFrame({
+    "nom": ["iPhone 15", "Roman SF", "Pixel 8",
+            "BD Humour", "Cafetière"],
+    "categorie": ["High-Tech", "Livre", "High-Tech",
+                  "Livre", "Maison"],
+    "note_evaluation": [4.8, 4.2, 4.5, 4.7, 4.1],
+})
+produits.sort_values(
+    by=["categorie", "note_evaluation"],
+    ascending=[True, False],
+)</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table class="cmp">
+            <thead><tr><th></th><th>nom</th><th>categorie</th><th>note_evaluation</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>iPhone 15</td><td>High-Tech</td><td>4.8</td></tr>
+              <tr><td>2</td><td>Pixel 8</td><td>High-Tech</td><td>4.5</td></tr>
+              <tr><td>3</td><td>BD Humour</td><td>Livre</td><td>4.7</td></tr>
+              <tr><td>1</td><td>Roman SF</td><td>Livre</td><td>4.2</td></tr>
+              <tr><td>4</td><td>Cafetière</td><td>Maison</td><td>4.1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">On trie d'abord par <strong>catégorie alphabétique</strong> ; la deuxième clé (<code>note_evaluation</code>, décroissante) départage ici les produits d'une même catégorie.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>17 / 42</span></div>
+  </section>
+
+
+  <!-- 18. FILTRER AVEC LAMBDA -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Filtrer avec une fonction personnalisée</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille", "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+
+# apply() exécute une fonction sur chaque valeur
+stations[stations["ville"].apply(
+    lambda nom: nom.lower().startswith(("l", "m"))
+)]
+
+# équivalent, vectorisé et plus rapide :
+stations[stations["ville"].str.lower().str.startswith(("l", "m"))]</code></pre>
+      </div>
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table class="cmp">
+          <thead><tr><th></th><th>ville</th><th>temperature_c</th><th>humidite_pct</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Lyon</td><td>15.1</td><td>65</td></tr>
+            <tr><td>2</td><td>Marseille</td><td>18.7</td><td>55</td></tr>
+            <tr><td>3</td><td>Lille</td><td>10.2</td><td>82</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1rem;"><code>apply(lambda ...)</code> est flexible mais lent ligne par ligne ; préférez une méthode vectorisée (<code>.str.*</code>) quand elle existe.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>18 / 42</span></div>
+  </section>
+
+    <!-- 19. AJOUT COLONNE AVEC LAMBDA -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Créer une colonne avec une fonction personnalisée</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille", "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct":,
+})
+
+# apply() applique la règle ligne par ligne pour créer la nouvelle colonne
+stations["Categorie"] = stations["temperature_c"].apply(
+    lambda temp: "Froid" if temp < 13 else "Chaud"
+)</code></pre>
+      </div>
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table class="cmp">
+          <thead><tr><th></th><th>ville</th><th>temperature_c</th><th>humidite_pct</th><th>Categorie</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>Paris</td><td>12.4</td><td>78</td><td><strong style="color: #4a90e2;">Froid</strong></td></tr>
+            <tr><td>1</td><td>Lyon</td><td>15.1</td><td>65</td><td><strong style="color: var(--accent);">Chaud</strong></td></tr>
+            <tr><td>2</td><td>Marseille</td><td>18.7</td><td>55</td><td><strong style="color: var(--accent);">Chaud</strong></td></tr>
+            <tr><td>3</td><td>Lille</td><td>10.2</td><td>82</td><td><strong style="color: #4a90e2;">Froid</strong></td></tr>
+            <tr><td>4</td><td>Brest</td><td>11.8</td><td>88</td><td><strong style="color: #4a90e2;">Froid</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1rem;">Tout comme pour le filtrage, <code>apply(lambda ...)</code> est très pratique pour les règles métiers complexes ("si/sinon"), mais elle désactive la vectorisation de pandas et ralentit le calcul sur de gros volumes de données.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>19 / 42</span></div>
+  </section>
+
+
+  <!-- 19. GROUPBY MULTI-COLONNES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Group by sur plusieurs colonnes</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Pour illustrer des cas plus riches, on enrichit le relevé avec deux jours de mesure par ville.</p>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">mesures = pd.DataFrame({
+    "ville": ["Paris","Paris","Lyon","Lyon","Marseille","Marseille",
+              "Lille","Lille","Brest","Brest"],
+    "jour": ["lundi", "mardi"] * 5,
+    "region": ["IDF","IDF","ARA","ARA","PACA","PACA","HDF","HDF","BZH","BZH"],
+    "temperature_c": [12.4,13.1,15.1,14.6,18.7,19.2,10.2,9.8,11.8,12.3],
+})
+
+mesures.groupby(["region", "jour"])["temperature_c"].mean().reset_index()</code></pre>
+      </div>
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text">  region   jour  temperature_c
+0    ARA  lundi           15.1
+1    ARA  mardi           14.6
+2    BZH  lundi           11.8
+3    BZH  mardi           12.3
+4    HDF  lundi           10.2
+5    HDF  mardi            9.8
+6    IDF  lundi           12.4
+7    IDF  mardi           13.1
+8   PACA  lundi           18.7
+9   PACA  mardi           19.2</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1rem;">Sans <code>reset_index()</code>, le résultat a un index à deux niveaux (<strong>MultiIndex</strong>) — moins pratique à manipuler. <code>reset_index()</code> le transforme en colonnes normales, avec un nouvel index numérique simple.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>19 / 42</span></div>
+  </section>
+
+  <!-- 20. GROUPBY MULTI-AGG -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Plusieurs agrégations à la fois</h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Liste de fonctions</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">mesures.groupby("region")["temperature_c"].agg(
+    ["mean", "max", "min"]
+)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Agrégation nommée</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">mesures.groupby("region").agg(
+    temp_moyenne=("temperature_c", "mean"),
+    temp_max=("temperature_c", "max"),
+)</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console (première version)</span></div>
+        <pre><code data-lang="text">region  mean   max   min
+ARA     14.85  15.1  14.6
+BZH     12.05  12.3  11.8
+HDF     10.00  10.2   9.8
+IDF     12.75  13.1  12.4
+PACA    18.95  19.2  18.7</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1rem;">L'agrégation nommée (<code>agg(nom=("colonne","fonction"))</code>) donne des noms de colonnes propres — pratique dès qu'on enchaîne plusieurs étapes.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>20 / 42</span></div>
+  </section>
+
+  <!-- 21. GROUPBY FONCTION PERSO -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Agrégation avec une fonction personnalisée</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">def amplitude(s):
+    return s.max() - s.min()
+
+mesures.groupby("region")["temperature_c"].agg(amplitude)
+
+# équivalent avec une lambda directe
+mesures.groupby("region")["temperature_c"].agg(lambda s: s.max() - s.min())</code></pre>
+      </div>
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text">region
+ARA     0.5
+BZH     0.5
+HDF     0.4
+IDF     0.7
+PACA    0.5
+Name: temperature_c, dtype: float64</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1rem;"><code>agg()</code> accepte n'importe quelle fonction qui prend une Series et renvoie une valeur unique — vos propres calculs y compris.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>21 / 42</span></div>
+  </section>
+
+  <!-- 22. VALEURS MANQUANTES : REPERER -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Valeurs manquantes : les repérer</h2>
+      <p class="subtitle" style="font-size:0.92rem;">En pratique, un jeu de données est rarement aussi propre que celui qu'on vient de manipuler.</p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">stations = pd.DataFrame({
+    "ville": ["Paris", "Lyon", "Marseille",
+              "Lille", "Brest"],
+    "temperature_c": [12.4, 15.1, 18.7, 10.2, 11.8],
+    "humidite_pct": [78, 65, 55, 82, 88],
+})
+df_test = stations.copy()
+df_test.loc[[0, 3], "temperature_c"] = np.nan
+
+df_test.isna().sum()</code></pre>
+        </div>
+        <div class="console-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+          <pre><code data-lang="text">ville            0
+temperature_c    2
+humidite_pct     0
+dtype: int64</code></pre>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><code>isna()</code> renvoie un DataFrame de booléens ; <code>.sum()</code> les compte colonne par colonne. On retrouve ici <code>.loc[[0, 3], ...]</code> : une sélection par étiquette, comme vu il y a quelques slides.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>22 / 42</span></div>
+  </section>
+
+  <!-- 23. VALEURS MANQUANTES : TRAITER -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Valeurs manquantes : les traiter</h2>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title"><code>dropna()</code></div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">df_test.dropna(subset=["temperature_c"])</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title"><code>fillna()</code></div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">mediane = df_test["temperature_c"].median()
+df_test["temperature_c"].fillna(mediane)</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout warning" style="margin-top:1.4rem;"><strong>Aucun choix par défaut :</strong> <code>dropna()</code> perd de l'information (les lignes disparaissent), <code>fillna()</code> en invente (la valeur est estimée) — le bon choix dépend toujours du contexte.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>23 / 42</span></div>
+  </section>
+
+  <!-- 24. VALUE_COUNTS -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title"><code style="color:var(--accent)">value_counts()</code> : le piège classique</h2>
+      <p class="subtitle" style="font-size:0.92rem;"><code>df_test</code> contient toujours 2 valeurs manquantes dans <code>temperature_c</code> — regardons ce que <code>value_counts()</code> en fait par défaut.</p>
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Par défaut</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">df_test["temperature_c"].value_counts()</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">15.1    1
+18.7    1
+11.8    1
+Name: count, dtype: int64</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">dropna=False</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+            <pre><code data-lang="python">df_test["temperature_c"].value_counts(dropna=False)</code></pre>
+          </div>
+          <div class="console-window" style="margin-top:0.6rem;">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">15.1    1
+18.7    1
+11.8    1
+NaN     2
+Name: count, dtype: int64</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout warning" style="margin-top:1.2rem;"><strong>Par défaut, <code>value_counts()</code> ignore les <code>NaN</code></strong> — à gauche, rien n'indique qu'il manque 2 valeurs. C'est l'erreur la plus fréquente avec cette fonction.</p>
+      <ul class="bullets compact" style="margin-top:1rem;">
+        <li><code>normalize=True</code> — des proportions plutôt que des comptes</li>
+        <li><code>sort=False</code> — garde l'ordre d'apparition plutôt que de trier par fréquence</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>24 / 42</span></div>
+  </section>
+
+  <!-- 25. JOINTURE PRINCIPE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Jointure : le principe</h2>
+      <p class="subtitle" style="font-size:0.92rem;"><code style="color:var(--accent)">pd.merge()</code> est l'équivalent pandas d'un <strong>JOIN SQL</strong> (qu'on retrouvera en séance 3 avec DuckDB) : combiner deux tables sur une colonne commune.</p>
+      <div class="diagram-flow">
+        <div class="diagram-node">
+          <div class="node-icon">&cap;</div>
+          <div class="node-title">how="inner"</div>
+          <div class="node-desc">Garde uniquement les lignes présentes dans les deux tables</div>
+        </div>
+        <div class="diagram-node">
+          <div class="node-icon">◑</div>
+          <div class="node-title">how="left"</div>
+          <div class="node-desc">Garde tout à gauche, complète avec <code>NaN</code> sinon</div>
+        </div>
+        <div class="diagram-node">
+          <div class="node-icon">◒</div>
+          <div class="node-title">how="right"</div>
+          <div class="node-desc">Garde tout à droite, complète avec <code>NaN</code> sinon</div>
+        </div>
+        <div class="diagram-node">
+          <div class="node-icon">&cup;</div>
+          <div class="node-title">how="outer"</div>
+          <div class="node-desc">Garde tout des deux côtés, <code>NaN</code> partout où ça ne correspond pas</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>25 / 42</span></div>
+  </section>
+
+  <!-- 26. JOINTURE INNER EN PRATIQUE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Jointure <code style="color:var(--accent)">how="inner"</code> en pratique</h2>
+      <p class="subtitle" style="font-size:0.92rem;">On utilise l'inner join lorsqu'on souhaite obtenir uniquement les données complètes et présentes simultanément des deux côtés.</p>
+
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Code Python</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo_inner.py</span></div>
+            <pre><code data-lang="python">capteurs = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C3"],
+    "ville": ["Paris", "Lyon", "Brest"],
+})
+mesures_recentes = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C9"],
+    "valeur": [21.4, 19.8, 15.0],
+})
+
+res = capteurs.merge(mesures_recentes, on="capteur_id", how="inner")</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Résultat console</div>
+          <div class="console-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">capteur_id  ville  valeur
+C1          Paris  21.4
+C2          Lyon   19.8</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;"><code>how="inner"</code> ne garde que l'intersection : le capteur C3 (qui n'a pas de mesure) et le capteur C9 (qui n'a pas de ville associée) sont tous deux exclus du résultat final.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>26 / 42</span></div>
+  </section>
+
+  <!-- 27. JOINTURE LEFT EN PRATIQUE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Jointure <code style="color:var(--accent)">how="left"</code> en pratique</h2>
+      <p class="subtitle" style="font-size:0.92rem;">C'est le choix le plus fréquent pour enrichir un jeu de données principal (la table de gauche) sans risquer de perdre la moindre ligne.</p>
+
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Code Python</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo_left.py</span></div>
+            <pre><code data-lang="python">capteurs = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C3"],
+    "ville": ["Paris", "Lyon", "Brest"],
+})
+mesures_recentes = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C9"],
+    "valeur": [21.4, 19.8, 15.0],
+})
+
+res = capteurs.merge(mesures_recentes, on="capteur_id", how="left")</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Résultat console</div>
+          <div class="console-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">capteur_id  ville  valeur
+C1          Paris  21.4
+C2          Lyon   19.8
+C3          Brest  NaN</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;"><code>how="left"</code> conserve l'intégralité de la table <code>capteurs</code>. Le capteur C3 reste présent, et sa valeur manquante est automatiquement complétée par un <code>NaN</code>. Le capteur C9 est quant à lui ignoré.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>27 / 42</span></div>
+  </section>
+
+  <!-- 28. JOINTURE RIGHT EN PRATIQUE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Jointure <code style="color:var(--accent)">how="right"</code> en pratique</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Strictement symétrique du type <code>left</code>, elle s'avère utile lorsque la table de droite sert de référence principale pour l'analyse.</p>
+
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Code Python</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo_right.py</span></div>
+            <pre><code data-lang="python">capteurs = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C3"],
+    "ville": ["Paris", "Lyon", "Brest"],
+})
+mesures_recentes = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C9"],
+    "valeur": [21.4, 19.8, 15.0],
+})
+
+res = capteurs.merge(mesures_recentes, on="capteur_id", how="right")</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Résultat console</div>
+          <div class="console-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">capteur_id  ville  valeur
+C1          Paris  21.4
+C2          Lyon   19.8
+C9          NaN    15.0</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;"><code>how="right"</code> préserve toutes les lignes de <code>mesures_recentes</code>. Le capteur C3 (sans mesure) disparaît, tandis que C9 est conservé et reçoit un <code>NaN</code> pour sa ville manquante.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>28 / 42</span></div>
+  </section>
+
+  <!-- 29. JOINTURE OUTER EN PRATIQUE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Jointure <code style="color:var(--accent)">how="outer"</code> en pratique</h2>
+      <p class="subtitle" style="font-size:0.92rem;">L'outil idéal de <strong>diagnostic</strong> pour identifier de manière exhaustive les anomalies et les lignes orphelines entre deux sources.</p>
+
+      <div class="two-col narrow-gap">
+        <div>
+          <div class="col-title">Code Python</div>
+          <div class="code-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo_outer.py</span></div>
+            <pre><code data-lang="python">capteurs = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C3"],
+    "ville": ["Paris", "Lyon", "Brest"],
+})
+mesures_recentes = pd.DataFrame({
+    "capteur_id": ["C1", "C2", "C9"],
+    "valeur": [21.4, 19.8, 15.0],
+})
+
+res = capteurs.merge(mesures_recentes, on="capteur_id", how="outer")</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">Résultat console</div>
+          <div class="console-window">
+            <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+            <pre><code data-lang="text">capteur_id  ville  valeur
+C1          Paris  21.4
+C2          Lyon   19.8
+C3          Brest  NaN
+C9          NaN    15.0</code></pre>
+          </div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;"><code>how="outer"</code> réalise l'union totale : absolument toutes les données des deux tables sont préservées. Des valeurs <code>NaN</code> comblent automatiquement les vides pour C3 (à droite) et pour C9 (à gauche).</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>29 / 42</span></div>
+  </section>
+
+  <!-- 28. JOINTURE QUAND CHOISIR -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappels pandas</div>
+      <h2 class="title">Les 4 types de jointure : quand choisir quoi ?</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Type</th><th>Comportement</th><th>Cas d'usage</th></tr></thead>
+          <tbody>
+            <tr><td><code>how="inner"</code></td><td>Ne garde que les correspondances</td><td>On veut uniquement des données complètes des deux côtés</td></tr>
+            <tr><td><code>how="left"</code></td><td>Garde tout à gauche, <code>NaN</code> sinon</td><td>On enrichit un jeu de données principal sans perdre de lignes</td></tr>
+            <tr><td><code>how="right"</code></td><td>Garde tout à droite, <code>NaN</code> sinon</td><td>Symétrique de <code>left</code> — utile quand la table de droite est la référence</td></tr>
+            <tr><td><code>how="outer"</code></td><td>Garde tout des deux côtés, <code>NaN</code> partout où ça ne correspond pas</td><td>Diagnostiquer les incohérences entre deux sources (lignes orphelines)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">En pratique, <code>how="left"</code> est souvent le choix le plus sûr pour enrichir une table de référence. <code>how="outer"</code>, lui, est un excellent outil de <strong>diagnostic</strong> : les <code>NaN</code> qui apparaissent signalent exactement les lignes qui ne correspondent pas entre vos deux sources.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>28 / 42</span></div>
+  </section>
+
+  <!-- 29. SECTION 3 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">03</div>
+      <h2 class="title">Formats de géodonnées</h2>
+      <p class="subtitle">CSV, JSON, GeoJSON, Parquet : même donnée, structures très différentes.</p>
+    </div>
+  </section>
+
+  <!-- 30. TABLEAU COMPARATIF FORMATS -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Quatre formats, quatre usages</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Format</th><th>Structure</th><th>Poids</th><th>Cas d'usage typique</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CSV</strong></td><td>Texte tabulaire, à plat</td><td>Moyen</td><td>Échange simple, tableur</td></tr>
+            <tr><td><strong>JSON</strong></td><td>Texte, arborescent (clé/valeur)</td><td>Élevé</td><td>APIs web, configuration</td></tr>
+            <tr><td><strong>GeoJSON</strong></td><td>JSON + géométries normalisées</td><td>Élevé</td><td>Cartographie web (Leaflet, Mapbox)</td></tr>
+            <tr><td><strong>Parquet</strong></td><td>Binaire, <strong>colonnaire</strong>, compressé</td><td><strong>Faible</strong></td><td>Analytique, gros volumes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;"><strong>Colonnaire</strong> = les valeurs d'une même colonne sont stockées ensemble sur le disque, plutôt que ligne par ligne : bien plus efficace à compresser et à interroger.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>30 / 42</span></div>
+  </section>
+
+    <!-- 31. RAW PREVIEW -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Même donnée, deux écritures</h2>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">villes.csv</span></div>
+          <pre><code data-lang="text">nom,region,lat,lon,population
+Paris,Ile-de-France,48.8566,2.3522,2145000
+Lyon,Auvergne-Rhone-Alpes,45.7640,4.8357,522000
+Marseille,PACA,43.2965,5.3698,873000</code></pre>
+        </div>
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">villes.geojson</span></div>
+          <pre><code data-lang="json">{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"nom": "Paris", "population": 2145000},
+      "geometry": { "type": "Point", "coordinates": [2.3522, 48.8566] }
+    },
+    {
+      "type": "Feature",
+      "properties": {"nom": "Lyon", "population": 522000},
+      "geometry": { "type": "Point", "coordinates": [4.8357, 45.7640] }
+    },
+    {
+      "type": "Feature",
+      "properties": {"nom": "Marseille", "population": 873000},
+      "geometry": { "type": "Point", "coordinates": [5.3698, 43.2965] }
+    }
+  ]
+}</code></pre>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">Le GeoJSON encapsule les entités dans une <code>FeatureCollection</code> globale. Notez l'ordre normalisé des coordonnées géographiques : toujours <strong>[longitude, latitude]</strong>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>31 / 42</span></div>
+  </section>
+
+
+  <!-- 32. FIDELITE FORMATS -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Un format, une fidélité différente</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Écrire un fichier n'est utile que si on peut le relire fidèlement.</p>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">df_villes["date_maj"] = pd.Timestamp("2024-01-15")
+
+df_csv_relu = pd.read_csv("villes.csv")
+df_json_relu = pd.read_json("villes.json")
+gdf_geojson_relu = gpd.read_file("villes.geojson")
+df_parquet_relu = pd.read_parquet("villes.parquet")
+
+print(df_csv_relu["date_maj"].dtype)       # object          (texte brut)
+print(df_json_relu["date_maj"].dtype)      # int64           (epoch, illisible)
+print(gdf_geojson_relu["date_maj"].dtype)  # datetime64[ns]  (ISO 8601, reconnu)
+print(df_parquet_relu["date_maj"].dtype)   # datetime64[ns]  (type stocké dans le fichier)</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;">Le CSV perd le type (simple texte) ; le JSON le perd encore plus mal (un entier epoch, illisible sans savoir que c'est une date). Le GeoJSON le préserve grâce au format ISO 8601 que <code>geopandas</code> sait reconnaître à la relecture ; le Parquet le préserve nativement, type stocké <strong>dans le fichier</strong>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>32 / 42</span></div>
+  </section>
+
+  <!-- 33. CRS DEFINITION / PROBLEME -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Le <strong>CRS</strong> (<em>Coordinate Reference System</em>) expliqué simplement !</h2>
+      <p class="subtitle">La Terre est une sphère en 3D, mais nos écrans et nos calculs se font à plat. Un <strong>CRS</strong> est simplement la méthode mathématique choisie pour mettre la Terre à plat.</p>
+
+      <div class="callout" style="margin-top:1rem; border-left-color: var(--accent);">
+        <strong>L'exemple concret :</strong> Vous voulez mesurer la distance entre votre bureau et deux capteurs.
+        Le GPS vous donne des coordonnées comme <code>48.8566</code> et <code>2.3522</code>. Ce ne sont pas des mètres, mais des <strong>degrés d'angle</strong>. Si vous les soustrayez, Python va vous dire : <em>"La distance est de 0.07 degrés"</em>. Impossible de calculer des kilomètres ou des frais de déplacement ainsi !
+      </div>
+
+      <div class="code-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">import_gps.py</span></div>
+        <pre><code data-lang="python">import pandas as pd
+import geopandas as gpd
+
+# Initialisation des données de nos deux capteurs
+df = pd.DataFrame({
+    "capteur": ["Capteur_A", "Capteur_B"],
+    "lat": [48.8566, 48.8200],
+    "lon": [2.3522, 2.3000]
+})
+
+# EPSG:4326 = Le langage universel des satellites (coordonnées en degrés)
+gdf = gpd.GeoDataFrame(
+    df, geometry=gpd.points_from_xy(df.lon, df.lat),
+    crs="EPSG:4326"
+)</code></pre>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>33 / 43</span></div>
+  </section>
+
+  <!-- 34. CRS METRE VS DEGRES (CALCUL) -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Traduire les degrés en mètres pour calculer</h2>
+      <p class="subtitle">Pour obtenir un calcul précis en France, on doit "reprojeter" (traduire) nos points en <strong>Lambert-93 (EPSG:2154)</strong>. C'est le système officiel de l'IGN calibré en mètres.</p>
+
+      <div class="code-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">calcul_distance.py</span></div>
+        <pre><code data-lang="python">from shapely.geometry import Point
+
+# On définit la position du bureau (en degrés GPS EPSG:4326) et on la projette en mètres
+point_bureau = gpd.GeoSeries([Point(2.4400, 48.8800)], crs="EPSG:4326").to_crs("EPSG:2154").iloc[0]
+
+# On passe du langage "GPS" au langage "Mètres français" pour nos capteurs
+gdf_metrique = gdf.to_crs("EPSG:2154")
+
+# Maintenant, les coordonnées magiques s'affichent en vrais mètres (ex: X=652300, Y=6862100)
+# On peut enfin calculer des distances réelles et fiables !
+gdf_metrique["distance_bureau"] = gdf_metrique.distance(point_bureau)
+print(gdf_metrique["distance_bureau"])</code></pre>
+      </div>
+
+      <div class="console-window" style="margin-top:1rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">console</span></div>
+        <pre><code data-lang="text"># Résultat obtenu en sortie (distances réelles en mètres) :
+0    7512.4  # (Le Capteur_A est bien à 7,5 kilomètres !)
+1    3420.1  # (Le Capteur_B est bien à 3,4 kilomètres !)</code></pre>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>34 / 43</span></div>
+  </section>
+
+
+  <!-- 35. CRS RECAPITULATIF / LES 3 CODES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Formats de géodonnées</div>
+      <h2 class="title">Le trio magique du Data Scientist</h2>
+      <p class="subtitle">Dans 99 % des cas, vous n'aurez à jongler qu'entre ces trois systèmes selon votre objectif :</p>
+
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table class="cmp">
+          <thead><tr><th>Code CRS</th><th>Son rôle secret</th><th>Unité</th><th>Quand l'utiliser ?</th></tr></thead>
+          <tbody>
+            <tr><td><code>EPSG:4326</code></td><td><strong>Stocker &amp; Partager</strong></td><td>Degrés</td><td>Le standard des fichiers (GeoJSON, etc.) et des puces GPS.</td></tr>
+            <tr><td><code>EPSG:2154</code></td><td><strong>Calculer (en France)</strong></td><td>Mètres</td><td>Dès qu'on mesure une distance, une surface ou qu'on crée des zones de tampon.</td></tr>
+            <tr><td><code>EPSG:3857</code></td><td><strong>Afficher sur le Web</strong></td><td>Mètres étirés</td><td>Utilisé par Google Maps ou OpenStreetMap pour aligner les rues à 90°.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="callout" style="margin-top:1.2rem;">💡 <strong>La règle d'or :</strong> On reçoit et on sauvegarde les données en <strong>4326</strong>, mais on passe temporairement en <strong>2154</strong> dès qu'un calcul géométrique entre en jeu. On pratiquera ces conversions ensemble en séance 4.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>35 / 43</span></div>
+  </section>
+
+
+  <!-- 35. VISUALISATION INTRO -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Deux façons de visualiser une carte</h2>
+      <ul class="bullets" style="margin-bottom:1.4rem;">
+        <li><strong>folium</strong> — cartes interactives (zoom, popup) basées sur Leaflet.js</li>
+        <li><strong>matplotlib</strong> — cartes statiques, rapides, faciles à exporter en image</li>
+      </ul>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">import folium
+
+carte = folium.Map(location=[46.6, 2.3], zoom_start=5)
+for _, row in villes.iterrows():
+    folium.CircleMarker(
+        [row.lat, row.lon], radius=5, popup=row.nom
+    ).add_to(carte)</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1.1rem;">Ce code produit une <strong>vraie carte HTML interactive</strong> — c'est exactement ce type d'interaction (zoom, clic, popup) qu'on reconstitue dans la démo qui suit.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>35 / 42</span></div>
+  </section>
+
+  <!-- 36. CARTE INTERACTIVE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Carte interactive — essayez !</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Une carte <strong>folium</strong> reste vivante après export : zoom, déplacement, et clic sur chaque point pour voir le détail.</p>
+      <div class="map-demo" id="mapInteractive">
+        <svg viewBox="0 0 300 320">
+          <g class="map-group">
+            <path class="france-shape" d="M100,20 L180,15 L230,60 L250,140 L220,200 L245,260 L170,300 L110,290 L60,230 L40,150 L30,80 L70,40 Z" />
+            <circle class="city-dot" cx="140" cy="40" r="6" data-name="Lille" data-info="10.2°C · 82% humidité" />
+            <text class="city-label" x="150" y="38">Lille</text>
+            <circle class="city-dot" cx="130" cy="105" r="6" data-name="Paris" data-info="12.4°C · 78% humidité" />
+            <text class="city-label" x="140" y="103">Paris</text>
+            <circle class="city-dot" cx="35" cy="112" r="6" data-name="Brest" data-info="11.8°C · 88% humidité" />
+            <text class="city-label" x="8" y="100">Brest</text>
+            <circle class="city-dot" cx="165" cy="175" r="6" data-name="Lyon" data-info="15.1°C · 65% humidité" />
+            <text class="city-label" x="175" y="173">Lyon</text>
+            <circle class="city-dot" cx="170" cy="255" r="6" data-name="Marseille" data-info="18.7°C · 55% humidité" />
+            <text class="city-label" x="128" y="270">Marseille</text>
+          </g>
+        </svg>
+        <div class="map-tooltip"></div>
+        <div class="map-controls">
+          <button data-zoom="in" aria-label="Zoomer">+</button>
+          <button data-zoom="out" aria-label="Dézoomer">−</button>
+          <button data-zoom="reset" aria-label="Réinitialiser">⟲</button>
+        </div>
+      </div>
+      <div class="map-caption">👆 Survolez un point, cliquez pour le sélectionner, glissez pour déplacer la carte, zoomez avec les boutons.</div>
+      <p class="muted" style="color:var(--ink-muted); font-size:0.75rem; margin-top:0.5rem;">Reconstitution simplifiée en SVG, pour interagir directement dans la slide — le vrai rendu folium est celui produit par le code de la slide précédente.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>36 / 42</span></div>
+  </section>
+
+  <!-- 37. CARTE STATIQUE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Carte statique — le même résultat, figé</h2>
+      <p class="subtitle" style="font-size:0.92rem;">Une carte <strong>matplotlib</strong> exportée en PNG est une simple image : ce qu'elle montre au moment de l'export, rien de plus.</p>
+      <div class="map-demo map-demo--static">
+        <svg viewBox="0 0 300 320">
+          <g class="map-group">
+            <path class="france-shape" d="M100,20 L180,15 L230,60 L250,140 L220,200 L245,260 L170,300 L110,290 L60,230 L40,150 L30,80 L70,40 Z" />
+            <circle class="city-dot" cx="140" cy="40" r="6" data-name="Lille" data-info="10.2°C" />
+            <text class="city-label" x="150" y="38">Lille</text>
+            <circle class="city-dot" cx="130" cy="105" r="6" data-name="Paris" data-info="12.4°C" />
+            <text class="city-label" x="140" y="103">Paris</text>
+            <circle class="city-dot" cx="35" cy="112" r="6" data-name="Brest" data-info="11.8°C" />
+            <text class="city-label" x="8" y="100">Brest</text>
+            <circle class="city-dot" cx="165" cy="175" r="6" data-name="Lyon" data-info="15.1°C" />
+            <text class="city-label" x="175" y="173">Lyon</text>
+            <circle class="city-dot" cx="170" cy="255" r="6" data-name="Marseille" data-info="18.7°C" />
+            <text class="city-label" x="128" y="270">Marseille</text>
+          </g>
+        </svg>
+        <span class="static-frame-badge">image .png</span>
+      </div>
+      <div class="map-caption">🖼️ Aucune interaction possible : pas de zoom, pas de clic, pas de déplacement — il faut ré-exécuter le code pour changer d'angle.</div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>37 / 42</span></div>
+  </section>
+
+  <!-- 38. PANDAS .plot() REEL -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Le raccourci <code style="color:var(--accent)">.plot()</code> de pandas</h2>
+      <p class="subtitle" style="font-size:0.9rem;">Pas besoin de sortir matplotlib en entier pour un graphique rapide : pandas expose <code>.plot()</code> directement sur un DataFrame ou une Series.</p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">mesures.groupby("region")["temperature_c"].mean() \
+    .sort_values().plot(kind="barh")</code></pre>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/img/matplotlib_plot_example.png" alt="Résultat de .plot(kind='barh') avec le style par défaut de matplotlib : axes bruts, sans titre ni légende">
+          <div class="chart-frame-caption"><span>rendu réel, zéro réglage</span><span>matplotlib (défaut)</span></div>
+        </div>
+      </div>
+      <p class="callout warning" style="margin-top:1.2rem;"><strong>Regardez le résultat :</strong> axes bruts, pas de titre, palette par défaut. C'est voulu — <code>.plot()</code> est fait pour explorer vite dans un notebook, <strong>pas vraiment pour diffuser tel quel</strong>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>38 / 42</span></div>
+  </section>
+
+  <!-- 39. PLOTLY INTRO -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Plotly : l'alternative moderne et interactive</h2>
+      <p class="subtitle" style="font-size:0.9rem;">Même donnée, bien moins d'effort qu'avec matplotlib pour un rendu interactif par défaut.</p>
+      <div class="two-col narrow-gap">
+        <div class="code-window">
+          <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+          <pre><code data-lang="python">import plotly.express as px
+
+data = (
+    mesures.groupby("region")["temperature_c"]
+    .mean().sort_values().reset_index()
+)
+px.bar(
+    data, x="temperature_c", y="region",
+    orientation="h",
+    title="Température moyenne par région",
+)</code></pre>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/img/plotly_bar_example.png" alt="Graphique en barres Plotly, avec titre, couleurs et grille, bien plus soigné que le rendu matplotlib par défaut">
+          <div class="chart-frame-caption"><span>rendu réel, zéro réglage</span><span>Plotly (défaut)</span></div>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;">Dans un notebook (ou une page web), ce graphique reste <strong>interactif</strong> : survol pour voir les valeurs, zoom, export en image en un clic — ici on n'en voit qu'une capture figée.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>39 / 42</span></div>
+  </section>
+
+  <!-- 40. PLOTLY GEOSPATIAL -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Plotly pour la donnée géospatiale</h2>
+      <p class="subtitle" style="font-size:0.9rem;">Plotly sait aussi dessiner des cartes interactives — un vrai atout pour ce module.</p>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">fig = px.scatter_geo(
+    df_villes, lat="latitude", lon="longitude",
+    size="population", color="region",
+    hover_name="ville", scope="europe",
+)
+fig.show()</code></pre>
+      </div>
+      <div class="chart-frame" style="margin-top:1rem; max-width:620px; margin-left:auto; margin-right:auto;">
+        <img src="assets/img/plotly_geo_example.png" alt="Carte Plotly scatter_geo des villes françaises, taille des points proportionnelle à la population, couleur par région">
+        <div class="chart-frame-caption"><span>rendu réel, interactif dans un notebook</span><span>Plotly (scatter_geo)</span></div>
+      </div>
+      <p class="callout" style="margin-top:1rem;"><code>scatter_geo()</code> pour une vue continent, <code>scatter_map()</code> pour un fond de carte façon OpenStreetMap — les deux restent zoomables et cliquables dès la sortie de la fonction.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>40 / 42</span></div>
+  </section>
+
+  <!-- 41. COMPARAISON -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Visualisation</div>
+      <h2 class="title">Quand choisir quoi ?</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Critère</th><th>folium</th><th>Plotly</th><th>matplotlib</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Interactivité</strong></td><td>Zoom, déplacement, popups</td><td>Zoom, survol, export au clic</td><td>Aucune — image figée</td></tr>
+            <tr><td><strong>Spécialité</strong></td><td>Cartes géographiques</td><td>Tout graphique + cartes</td><td>Tout graphique</td></tr>
+            <tr><td><strong>Poids du résultat</strong></td><td>HTML (Leaflet embarqué)</td><td>HTML ou image, selon l'export</td><td>Image légère (PNG/SVG)</td></tr>
+            <tr><td><strong>Usage typique</strong></td><td>Carte interactive autonome</td><td>Dashboard, rapport interactif</td><td>Exploration rapide, publication</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>41 / 42</span></div>
+  </section>
+
+  <!-- 42. RECAP + TRANSITION -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Récapitulatif</div>
+      <h2 class="title">Ce qu'on a vu aujourd'hui</h2>
+      <ul class="recap-list">
+        <li>Le pipeline data : <strong>collecte → validation → transformation → exploitation</strong></li>
+        <li>Lire la documentation d'une fonction (<code>?</code>, <code>help()</code>, Shift+Tab) avant de se fier à un seul exemple</li>
+        <li>L'index : <code>.loc</code> vs <code>.iloc</code>, <code>set_index</code> / <code>reset_index</code></li>
+        <li>Filtrage multi-critères, tri multi-colonnes, <code>groupby</code> avancé, <code>value_counts</code> et son piège <code>dropna=False</code></li>
+        <li>Valeurs manquantes (<code>isna</code>, <code>dropna</code>, <code>fillna</code>) et les quatre types de jointure (<code>merge</code> : inner/left/right/outer)</li>
+        <li>Quatre formats de géodonnées, le CRS et ses variantes les plus courantes, la fidélité des types à la relecture</li>
+        <li>Carte interactive (folium), graphiques modernes (Plotly) — et pourquoi <code>.plot()</code>/matplotlib restent réservés à l'exploration</li>
+      </ul>
+      <p class="callout" style="margin-top:1.6rem;"><strong>Place au TP :</strong> ouvrez <code>notebooks/01_pandas_formats_geodata/exercice.ipynb</code> — vous allez construire, nettoyer, enrichir, exporter et visualiser un jeu de données de villes françaises.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>42 / 42</span></div>
+  </section>
+
+    <!-- SLIDE TP : A VOUS DE JOUER -->
+  <section class="slide">
+    <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+      <div class="kicker" style="text-align: center;">Pratique</div>
+      <h2 class="title" style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">🛠️ TP : À vous de jouer !</h2>
+
+      <div class="callout" style="border-left-color: var(--accent); margin-bottom: 2rem; padding: 1.5rem;">
+        <strong style="font-size: 1.1rem;">Objectif :</strong> Mettre en pratique les rappels Pandas, la manipulation de jointures complexes et la gestion des différents systèmes de coordonnées (CRS).
+      </div>
+
+      <div class="code-window" style="margin-bottom: 1.5rem;">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">Terminal</span></div>
+        <pre><code data-lang="bash"># 1. Clonez le dépôt de l'exercice sur votre machine
+git clone https://github.com/antoineperrot/ipsa_msc_spacedata_students.git
+
+# 2. Ouvrez votre éditeur ou environnement Jupyter et accédez au notebook :</code></pre>
+      </div>
+
+      <div class="console-window" style="background: #1a1e24; border: 1px solid #333;">
+        <div class="chrome" style="background: #252a33;"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">Chemin du notebook</span></div>
+        <pre><code data-lang="text" style="color: #a9b7c6; font-weight: bold;">📁 <span style="color: var(--accent);">spacedata-python</span> / 📁 notebooks / 📄 01_pandas_formats_geodata.ipynb</code></pre>
+      </div>
+
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>20 / 42</span></div>
+  </section>
+
+
+</div>
+
+<script src="assets/deck.js"></script>
+</body>
+</html>
