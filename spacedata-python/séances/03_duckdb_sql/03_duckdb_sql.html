@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr" data-accent="aqua">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Séance 3 — DuckDB &amp; SQL analytique</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="slide-counter" id="counter"></div>
+<div class="nav-hint">↑ ↓ naviguer · F plein écran</div>
+<div class="nav-buttons"><button id="prevBtn" aria-label="Précédent">‹</button><button id="nextBtn" aria-label="Suivant">›</button></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. TITRE -->
+  <section class="slide slide--title">
+    <div class="slide-content">
+      <div class="module-name">MSc SpaceData — IPSA — Python avancé pour le traitement de données spatiales</div>
+      <div class="kicker">Séance 3 / 6</div>
+      <h1 class="title">DuckDB &amp; SQL analytique</h1>
+      <p class="subtitle">Interroger des DataFrames et des fichiers avec du SQL, sans serveur à installer.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><strong>1h</strong> cours magistral</div>
+        <div class="meta-chip">suivi de <strong>3h</strong> de TP</div>
+        <div class="meta-chip">TP : <code style="color:var(--accent)">exercices/exercice.ipynb</code></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>Séance 3</span></div>
+  </section>
+
+  <!-- 2. AGENDA -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Au programme</div>
+      <h2 class="title">Ce qu'on va voir aujourd'hui</h2>
+      <ul class="timeline">
+        <li><span class="time">5 min</span><span class="label"><strong>Rappel séance 2</strong><span class="muted"> — APIs, HTTP, authentification</span></span></li>
+        <li><span class="time">10 min</span><span class="label"><strong>Pourquoi SQL malgré pandas ?</strong><span class="muted"> — motivation et complémentarité</span></span></li>
+        <li><span class="time">25 min</span><span class="label"><strong>Bases SQL</strong><span class="muted"> — SELECT, WHERE, GROUP BY, JOIN</span></span></li>
+        <li><span class="time">10 min</span><span class="label"><strong>DuckDB dans l'écosystème</strong><span class="muted"> — in-process, Parquet, comparaison</span></span></li>
+        <li><span class="time">10 min</span><span class="label"><strong>Présentation du TP</strong><span class="muted"> — un cas concret, ses étapes</span></span></li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>2 / 34</span></div>
+  </section>
+
+  <!-- 3. RAPPEL SEANCE 2 -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Rappel — séance 2</div>
+      <h2 class="title">La semaine dernière</h2>
+      <ul class="bullets">
+        <li><span>Le modèle client-serveur et l'anatomie d'une requête HTTP</span></li>
+        <li><span>Verbes <strong>GET/POST/PUT/DELETE</strong> et codes de statut <strong>2xx/4xx/5xx</strong></span></li>
+        <li><span>Authentification par clé API, token bearer, et la règle du <code>.env</code></span></li>
+      </ul>
+      <p class="callout" style="margin-top:1.6rem;"><strong>Aujourd'hui :</strong> une fois la donnée collectée, comment l'interroger efficacement — même quand elle devient volumineuse ?</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>3 / 34</span></div>
+  </section>
+
+  <!-- 4. SECTION 1 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">01</div>
+      <h2 class="title">Pourquoi SQL malgré pandas ?</h2>
+      <p class="subtitle">Deux outils complémentaires, pas concurrents.</p>
+    </div>
+  </section>
+
+  <!-- 5. MOTIVATION -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Pourquoi SQL malgré pandas ?</div>
+      <h2 class="title">Deux langages, deux forces</h2>
+      <div class="diagram-compare">
+        <div class="compare-box">
+          <div class="box-title">pandas</div>
+          <ul class="bullets compact">
+            <li><span>Manipulation ligne par ligne, transformations complexes</span></li>
+            <li><span>Écosystème Python (numpy, scikit-learn...)</span></li>
+            <li><span>Syntaxe impérative — on décrit <em>comment</em> faire</span></li>
+          </ul>
+        </div>
+        <div class="compare-vs">+</div>
+        <div class="compare-box">
+          <div class="box-title">SQL (DuckDB)</div>
+          <ul class="bullets compact">
+            <li><span>Agrégations et jointures très lisibles à grande échelle</span></li>
+            <li><span>Requêtes directement sur des fichiers, sans tout charger</span></li>
+            <li><span>Syntaxe déclarative — on décrit <em>quoi</em> obtenir</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="callout" style="margin-top:1.6rem;">On mélangera souvent les deux dans un même notebook : DuckDB pour agréger/joindre, pandas pour la suite du traitement.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>5 / 34</span></div>
+  </section>
+
+  <!-- 6. SECTION 2 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">02</div>
+      <h2 class="title">Bases SQL</h2>
+      <p class="subtitle">Des briques simples, ajoutées une à une : SELECT, WHERE, ORDER BY, GROUP BY, JOIN.</p>
+    </div>
+  </section>
+
+  <!-- S1 TABLE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Une table, c'est quoi ?</h2>
+      <p class="subtitle">Le support de toutes nos requêtes : des lignes et des colonnes, comme un tableau Excel — mais typé.</p>
+      <div class="two-col narrow-gap"><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">table satellites</span></div><pre><code data-lang="text">id  nom          pays  altitude_km  masse_kg  mission_id
+1   Sentinel-1A  EU    693          2300      1
+2   Sentinel-2A  EU    786          1140      2
+3   Sentinel-2B  EU    786          1140      2
+4   Sentinel-3A  EU    814          1250      3
+5   SPOT-7       FR    694          714       4
+6   Landsat-9    US    705          2711      5
+7   Terra        US    705          4864      6
+8   Hubble       US    540          11110     NULL</code></pre></div><div><ul class="bullets compact"><li><span>Une <strong>ligne</strong> = un enregistrement (ici : un satellite)</span></li><li><span>Une <strong>colonne</strong> = un attribut, avec un <strong>type</strong> unique (texte, entier, décimal, date...)</span></li><li><span><code>id</code> identifie chaque ligne de façon unique (<em>clé primaire</em>)</span></li><li><span><code>NULL</code> = valeur absente (Hubble n'est rattaché à aucune mission) — ce n'est ni <code>0</code> ni une chaîne vide</span></li></ul></div></div><p class="callout" style="margin-top:1.4rem;">Cette table <code>satellites</code> (8 lignes) sera notre fil rouge pour tous les exemples qui suivent.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>7 / 34</span></div>
+  </section>
+  <!-- S2 SQUELETTE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Une requête SQL : le squelette</h2>
+      <p class="subtitle">On décrit <em>ce qu'on veut</em> obtenir, pas comment le calculer.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">squelette.sql</span></div><pre><code data-lang="sql">SELECT   colonnes à afficher
+FROM     table de départ
+WHERE    filtre sur les lignes
+GROUP BY regroupement
+HAVING   filtre sur les groupes
+ORDER BY tri
+LIMIT    nombre de lignes max;</code></pre></div><div><ul class="bullets compact"><li><span>Seuls <code>SELECT</code> et <code>FROM</code> sont obligatoires</span></li><li><span>Les autres clauses sont <strong>optionnelles</strong>, mais toujours dans cet ordre</span></li><li><span>Mots-clés non sensibles à la casse : <code>select</code> = <code>SELECT</code> (on les met en majuscules par convention)</span></li><li><span>Le <code>;</code> termine la requête</span></li><li><span>Une requête renvoie toujours… <strong>une table</strong></span></li></ul></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Je veux <strong>ces colonnes</strong>&nbsp;<code>SELECT</code> <strong>dans cette table</strong>&nbsp;<code>FROM</code>, <strong>seulement les lignes qui…</strong>&nbsp;<code>WHERE</code>, <strong>regroupées par…</strong>&nbsp;<code>GROUP BY</code>, <strong>en ne gardant que les groupes qui…</strong>&nbsp;<code>HAVING</code>, <strong>triés par…</strong>&nbsp;<code>ORDER BY</code>, <strong>les n premiers</strong>&nbsp;<code>LIMIT</code>. »</p><p class="callout" style="margin-top:1.4rem;">On va construire ce squelette clause par clause, en partant de la requête la plus simple possible.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>8 / 34</span></div>
+  </section>
+  <!-- S3 SELECT -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">SELECT … FROM : choisir et calculer des colonnes</h2>
+      <p class="subtitle">La requête la plus simple : lire une table. <code>AS</code> donne un nom aux colonnes calculées.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT *            -- toutes les colonnes
+FROM satellites;
+
+SELECT nom, pays    -- seulement certaines
+FROM satellites;
+
+SELECT nom,
+       altitude_km * 1000 AS altitude_m
+FROM satellites
+LIMIT 3;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat de la 3e requête</span></div><pre><code data-lang="text">nom          altitude_m
+Sentinel-1A  693000
+Sentinel-2A  786000
+Sentinel-2B  786000</code></pre></div></div>
+      <p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Donne-moi <strong>le nom et le pays</strong>&nbsp;<code>SELECT</code> <strong>de tous les satellites</strong>&nbsp;<code>FROM</code> » · « …<strong>l'altitude × 1000, que j'appelle <em>altitude_m</em></strong>&nbsp;<code>AS</code>, <strong>les 3 premiers seulement</strong>&nbsp;<code>LIMIT</code>. »</p>
+      <ul class="bullets compact" style="margin-top:1rem;"><li><span><code>FROM</code> : de quelle table on part ; <code>SELECT</code> : quelles colonnes on garde — <code>*</code> = toutes</span></li><li><span>Opérateurs <code>+ - * /</code> et fonctions (<code>ROUND()</code>, <code>UPPER()</code>…) ; <code>SELECT</code> lit, il <strong>ne modifie jamais</strong> la table</span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>9 / 34</span></div>
+  </section>
+  <!-- S5 WHERE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">WHERE : filtrer les lignes</h2>
+      <p class="subtitle">On ne garde que les lignes où la condition est vraie. Les textes s'écrivent entre <strong>apostrophes simples</strong> : <code>'US'</code>.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT nom, pays, altitude_km
+FROM satellites
+WHERE altitude_km &gt; 700;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">nom          pays  altitude_km
+Sentinel-2A  EU    786
+Sentinel-2B  EU    786
+Sentinel-3A  EU    814
+Landsat-9    US    705
+Terra        US    705</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Donne-moi <strong>le nom, le pays et l'altitude</strong>&nbsp;<code>SELECT</code> <strong>des satellites</strong>&nbsp;<code>FROM</code> <strong>dont l'altitude dépasse 700 km</strong>&nbsp;<code>WHERE</code>. »</p><div class="table-wrap" style="margin-top:1rem;"><table class="cmp"><thead><tr><th>Opérateur</th><th>Sens</th><th>Exemple</th></tr></thead><tbody><tr><td><code>=</code> <code>&lt;&gt;</code></td><td>égal / différent (un seul <code>=</code>, pas <code>==</code>)</td><td><code>pays = 'US'</code></td></tr><tr><td><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td>comparaisons</td><td><code>masse_kg &gt;= 2000</code></td></tr></tbody></table></div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>10 / 34</span></div>
+  </section>
+  <!-- S6 WHERE2 -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">WHERE : combiner des conditions</h2>
+      <p class="subtitle">AND, OR, NOT, IN, BETWEEN, LIKE, IS NULL.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">WHERE pays = 'US' AND altitude_km &gt;= 600
+WHERE pays = 'FR' OR pays = 'EU'
+WHERE pays IN ('FR', 'EU')
+WHERE altitude_km BETWEEN 600 AND 750
+WHERE mission_id IS NULL
+WHERE nom LIKE 'Sentinel%'</code></pre></div><div><div class="table-wrap"><table class="cmp"><thead><tr><th>Mot-clé</th><th>Rôle</th></tr></thead><tbody><tr><td><code>AND</code> / <code>OR</code></td><td>les deux / l'une des conditions</td></tr><tr><td><code>IN (…)</code></td><td>égal à l'une des valeurs de la liste</td></tr><tr><td><code>BETWEEN a AND b</code></td><td>borne basse et haute <strong>incluses</strong></td></tr></tbody></table></div></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « <strong>américain <em>et</em> au-dessus de 600 km</strong>&nbsp;<code>AND</code> · <strong>français <em>ou</em> européen</strong>&nbsp;<code>OR</code> · <strong>parmi cette liste de pays</strong>&nbsp;<code>IN</code> · <strong>entre 600 et 750 km</strong>&nbsp;<code>BETWEEN</code> · <strong>dont le nom commence par Sentinel</strong>&nbsp;<code>LIKE</code> · <strong>sans mission renseignée</strong>&nbsp;<code>IS NULL</code> · <strong>le contraire de…</strong>&nbsp;<code>NOT</code> »</p><p class="callout" style="margin-top:1rem;">⚠️ <code>= NULL</code> ne marche jamais : on écrit <code>IS NULL</code>. Mélangez <code>AND</code>/<code>OR</code> avec des <strong>parenthèses</strong>.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>11 / 34</span></div>
+  </section>
+  <!-- S7 ORDER -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">ORDER BY et LIMIT</h2>
+      <p class="subtitle">Trier le résultat, puis n'en garder qu'une partie.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT nom, masse_kg
+FROM satellites
+ORDER BY masse_kg DESC
+LIMIT 3;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">nom        masse_kg
+Hubble     11110
+Terra      4864
+Landsat-9  2711</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Donne-moi le nom et la masse <strong>des satellites</strong>&nbsp;<code>FROM</code>, <strong>classés du plus lourd au plus léger</strong>&nbsp;<code>ORDER BY</code>, <strong>et garde les 3 premiers</strong>&nbsp;<code>LIMIT</code>. »</p><ul class="bullets compact" style="margin-top:1rem;"><li><span><code>ORDER BY col</code> : tri croissant (<code>ASC</code>, par défaut) ou <code>DESC</code> (décroissant)</span></li><li><span>Plusieurs critères possibles : <code>ORDER BY pays ASC, masse_kg DESC</code></span></li><li><span><code>LIMIT n</code> : garde les <em>n</em> premières lignes <strong>après</strong> le tri — d'où le « top 3 »</span></li><li><span>Sans <code>ORDER BY</code>, l'ordre des lignes n'est pas garanti</span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>12 / 34</span></div>
+  </section>
+  <!-- S9 AGG -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Agréger : résumer une table en une ligne</h2>
+      <p class="subtitle">COUNT, SUM, AVG, MIN, MAX.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT COUNT(*)                AS nb,
+       ROUND(AVG(altitude_km), 1) AS alt_moy,
+       MIN(altitude_km)        AS alt_min,
+       MAX(masse_kg)           AS masse_max
+FROM satellites;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">nb  alt_moy  alt_min  masse_max
+8   715.4    540      11110</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « <strong>Combien de satellites</strong>&nbsp;<code>COUNT(*)</code>, <strong>quelle altitude moyenne</strong>&nbsp;<code>AVG</code>, <strong>quelle altitude minimale</strong>&nbsp;<code>MIN</code>, <strong>quelle masse maximale</strong>&nbsp;<code>MAX</code> — pour toute la table ? »</p><p class="callout" style="margin-top:1.4rem;"><code>COUNT</code> compte, <code>SUM</code>/<code>AVG</code> somment/moyennent, <code>MIN</code>/<code>MAX</code> donnent les extrêmes. Elles <strong>réduisent toutes les lignes à une seule</strong> et ignorent les <code>NULL</code> (sauf <code>COUNT(*)</code>).</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>13 / 34</span></div>
+  </section>
+  <!-- S10 GROUPBY -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">GROUP BY : une ligne par groupe</h2>
+      <p class="subtitle">Même agrégats, mais calculés séparément pour chaque valeur d'une colonne.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT pays,
+       COUNT(*)                   AS nb,
+       ROUND(AVG(altitude_km), 1) AS alt_moy
+FROM satellites
+GROUP BY pays
+ORDER BY nb DESC;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">pays  nb  alt_moy
+EU    4   769.8
+US    3   650.0
+FR    1   694.0</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « <strong>Pour chaque pays</strong>&nbsp;<code>GROUP BY pays</code>, compte les satellites et calcule leur altitude moyenne, puis <strong>classe les pays du plus au moins fourni</strong>&nbsp;<code>ORDER BY nb DESC</code>. » — « pour chaque… » = <code>GROUP BY</code>.</p><ul class="bullets compact" style="margin-top:1rem;"><li><span><code>GROUP BY pays</code> : crée un paquet de lignes par pays, puis les agrégats sont calculés <em>dans</em> chaque paquet</span></li><li><span>Règle d'or : toute colonne du <code>SELECT</code> est soit dans le <code>GROUP BY</code>, soit à l'intérieur d'une fonction d'agrégation</span></li><li><span>Équivalent pandas : <code>df.groupby('pays').agg(...)</code></span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>14 / 34</span></div>
+  </section>
+  <!-- S11 HAVING -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">WHERE vs HAVING</h2>
+      <p class="subtitle">Deux filtres, à deux moments différents.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT pays, COUNT(*) AS nb
+FROM satellites
+WHERE altitude_km &gt; 600
+GROUP BY pays
+HAVING COUNT(*) &gt; 1
+ORDER BY nb DESC;</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">pays  nb
+EU    4
+US    2</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Parmi <strong>les satellites au-dessus de 600 km</strong>&nbsp;<code>WHERE</code>, <strong>compte-les par pays</strong>&nbsp;<code>GROUP BY</code>, <strong>ne garde que les pays qui en ont plus d'un</strong>&nbsp;<code>HAVING</code>, <strong>classés par nombre décroissant</strong>&nbsp;<code>ORDER BY</code>. »</p><ul class="bullets compact" style="margin-top:1rem;"><li><span><code>WHERE altitude_km &gt; 600</code> : s'applique aux <strong>lignes</strong>, avant le regroupement (Hubble, à 540 km, disparaît)</span></li><li><span><code>HAVING COUNT(*) &gt; 1</code> : s'applique aux <strong>groupes</strong>, après l'agrégation (la France, avec 1 seul satellite, disparaît)</span></li><li><span>Impossible d'utiliser <code>COUNT(*)</code> dans un <code>WHERE</code> : l'agrégat n'existe pas encore à cette étape</span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>15 / 34</span></div>
+  </section>
+  <!-- S12 POURQUOI JOIN -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Pourquoi joindre des tables ?</h2>
+      <p class="subtitle">On évite de répéter l'information : chaque fait est stocké une seule fois.</p>
+      <div class="two-col narrow-gap"><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">satellites</span></div><pre><code data-lang="text">id  nom          mission_id
+1   Sentinel-1A  1
+5   SPOT-7       4
+6   Landsat-9    5
+8   Hubble       NULL</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">missions</span></div><pre><code data-lang="text">id  nom_mission  agence
+1   Copernicus S1   ESA
+2   Copernicus S2   ESA
+3   Copernicus S3   ESA
+4   SPOT            CNES
+5   Landsat         NASA
+6   EOS             NASA</code></pre></div></div><ul class="bullets compact" style="margin-top:1rem;"><li><span><code>satellites.mission_id</code> pointe vers <code>missions.id</code> : c'est une <strong>clé étrangère</strong></span></li><li><span>Le nom de l'agence est écrit une fois dans <code>missions</code>, pas recopié sur chaque satellite</span></li><li><span>Une <strong>jointure</strong> (<code>JOIN</code>) reconstitue la table large quand on en a besoin — l'équivalent SQL de <code>pd.merge</code></span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>16 / 34</span></div>
+  </section>
+  <!-- S13 INNER -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">INNER JOIN : garder les correspondances</h2>
+      <p class="subtitle"><code>ON</code> dit quelle colonne de gauche correspond à quelle colonne de droite.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT s.nom, m.nom_mission, m.agence
+FROM satellites AS s
+INNER JOIN missions AS m
+  ON s.mission_id = m.id
+WHERE s.pays = 'US';</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">nom        nom_mission  agence
+Landsat-9  Landsat      NASA
+Terra      EOS          NASA</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Pour chaque satellite américain <strong>américain</strong>&nbsp;<code>WHERE</code>, donne son nom, <strong>ainsi que le nom et l'agence de sa mission</strong>&nbsp;<code>JOIN</code> <strong>en rapprochant <em>mission_id</em> de l'<em>id</em> de la mission</strong>&nbsp;<code>ON</code>. »</p><ul class="bullets compact" style="margin-top:1rem;"><li><span><code>s</code> et <code>m</code> sont des <strong>alias de table</strong> : ils évitent d'écrire <code>satellites.</code> partout et lèvent les ambiguïtés (<code>s.id</code> vs <code>m.id</code>)</span></li><li><span><code>ON s.mission_id = m.id</code> : la condition d'appariement — une ligne est produite pour chaque couple qui la satisfait</span></li><li><span>Hubble (<code>mission_id = NULL</code>) ne correspond à rien : <strong>il disparaît du résultat</strong></span></li></ul>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>17 / 34</span></div>
+  </section>
+  <!-- S14 LEFT -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">LEFT JOIN : garder toute la table de gauche</h2>
+      <p class="subtitle">Même requête, mais on ne perd aucun satellite.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT s.nom, m.nom_mission, m.agence
+FROM satellites AS s
+LEFT JOIN missions AS m
+  ON s.mission_id = m.id
+WHERE s.pays = 'US';</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">nom        nom_mission  agence
+Landsat-9  Landsat      NASA
+Terra      EOS          NASA
+Hubble     NULL         NULL</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Pareil, mais <strong>garde le satellite même s'il n'a pas de mission</strong>&nbsp;<code>LEFT JOIN</code> — les champs de la mission restent vides (<code>NULL</code>). »</p><div class="table-wrap" style="margin-top:1rem;"><table class="cmp"><thead><tr><th>Type</th><th>Garde…</th></tr></thead><tbody><tr><td><code>INNER JOIN</code></td><td>uniquement les lignes qui ont une correspondance des deux côtés</td></tr><tr><td><code>LEFT JOIN</code></td><td>toutes les lignes de gauche ; <code>NULL</code> côté droit si pas de correspondance</td></tr></tbody></table></div><p class="callout" style="margin-top:1.4rem;">Même vocabulaire que <code>pd.merge(how='inner' / 'left')</code> en séance 1.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>18 / 34</span></div>
+  </section>
+  <!-- S14b DICO -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Du français au SQL : le petit dictionnaire</h2>
+      
+      <div class="table-wrap"><table class="cmp"><thead><tr><th>Ce que vous dites</th><th>Ce que vous écrivez</th></tr></thead><tbody><tr><td>« combien de… »</td><td><code>COUNT(*)</code></td></tr><tr><td>« la moyenne / la somme / le plus grand… »</td><td><code>AVG</code> · <code>SUM</code> · <code>MAX</code> / <code>MIN</code></td></tr><tr><td>« seulement ceux qui… », « dont… »</td><td><code>WHERE</code> (sur les lignes)</td></tr><tr><td>« pour chaque… », « par… »</td><td><code>GROUP BY</code></td></tr><tr><td>« seulement les groupes qui… »</td><td><code>HAVING</code> (sur les groupes)</td></tr><tr><td>« du plus… au moins… », « trié par… »</td><td><code>ORDER BY … DESC</code> / <code>ASC</code></td></tr><tr><td>« en rapprochant / avec les infos de… »</td><td><code>JOIN … ON …</code></td></tr><tr><td>« même s'il n'y a pas de correspondance »</td><td><code>LEFT JOIN</code></td></tr></tbody></table></div>
+      <p class="callout" style="margin-top:1rem;"><strong>Méthode :</strong> 1) écrivez la phrase (« pour chaque pays, combien de satellites au-dessus de 600 km ? »), 2) repérez les mots-clés du dictionnaire, 3) remplissez le squelette <code>SELECT / FROM / WHERE / GROUP BY…</code></p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>19 / 34</span></div>
+  </section>
+
+  <!-- S15 COMPLET -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Bases SQL</div>
+      <h2 class="title">Tout ensemble : une requête complète</h2>
+      <p class="subtitle">Chaque clause fait un travail précis, dans l'ordre vu plus haut.</p>
+      <div class="two-col narrow-gap"><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.sql</span></div><pre><code data-lang="sql">SELECT   m.agence, COUNT(*) AS nb_sat      -- 5. colonnes de sortie
+FROM     satellites s                       -- 1. table de départ
+JOIN     missions m ON s.mission_id = m.id  --    ...enrichie par jointure
+WHERE    s.altitude_km &gt; 600                -- 2. filtre sur les lignes
+GROUP BY m.agence                           -- 3. un groupe par agence
+HAVING   COUNT(*) &gt;= 2                      -- 4. filtre sur les groupes
+ORDER BY nb_sat DESC                        -- 6. tri
+LIMIT    5;                                 -- 7. coupe</code></pre></div><div class="console-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">résultat</span></div><pre><code data-lang="text">agence  nb_sat
+ESA     4
+NASA    2</code></pre></div></div><p class="callout" style="margin-top:1rem;"><strong>En français :</strong> « Pour <strong>chaque agence</strong>&nbsp;<code>GROUP BY</code>, compte les satellites <strong>situés au-dessus de 600 km</strong>&nbsp;<code>WHERE</code> ; <strong>garde celles qui en ont au moins 2</strong>&nbsp;<code>HAVING</code> ; <strong>classe-les par nombre décroissant</strong>&nbsp;<code>ORDER BY</code>, <strong>5 au maximum</strong>&nbsp;<code>LIMIT</code>. »</p><p class="callout" style="margin-top:1.4rem;"><strong>À retenir :</strong> <code>SELECT</code> choisit, <code>WHERE</code> filtre les lignes, <code>GROUP BY</code> résume, <code>HAVING</code> filtre les résumés, <code>JOIN</code> relie les tables, <code>ORDER BY</code> / <code>LIMIT</code> mettent en forme. C'est exactement ce que vous utiliserez en TP.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>20 / 34</span></div>
+  </section>
+
+  <!-- 12. SECTION 4 -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">03</div>
+      <h2 class="title">DuckDB dans l'écosystème</h2>
+      <p class="subtitle">Une base analytique qui tient dans une simple librairie Python.</p>
+    </div>
+  </section>
+
+  <!-- 13. ZERO-COPY PANDAS -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">DuckDB dans l'écosystème</div>
+      <h2 class="title">Interroger un DataFrame directement</h2>
+      <p class="subtitle">DuckDB tourne <strong>en process</strong> (pas de serveur à lancer) et référence vos variables Python sans les recopier.</p>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">import duckdb
+
+resultat = duckdb.sql(
+    "SELECT pays, COUNT(*) FROM df GROUP BY pays"
+).df()</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;"><code>df</code> est le DataFrame pandas existant en mémoire — aucune étape d'import explicite n'est nécessaire.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>22 / 34</span></div>
+  </section>
+
+  <!-- 14. LECTURE PARQUET DIRECTE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">DuckDB dans l'écosystème</div>
+      <h2 class="title">Lire un fichier sans le charger en mémoire</h2>
+      <div class="code-window">
+        <div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">demo.py</span></div>
+        <pre><code data-lang="python">duckdb.sql("""
+    SELECT region, AVG(population)
+    FROM read_parquet('villes_large.parquet')
+    GROUP BY region
+""").df()</code></pre>
+      </div>
+      <p class="callout" style="margin-top:1.2rem;">DuckDB lit le fichier lui-même, colonne par colonne — utile pour des fichiers bien plus gros que la RAM disponible.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>23 / 34</span></div>
+  </section>
+
+  <!-- 15. COMPARAISON PERFORMANCE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">DuckDB dans l'écosystème</div>
+      <h2 class="title">Un ordre de grandeur sur une agrégation</h2>
+      <p class="subtitle">Illustration sur quelques millions de lignes — <strong>à mesurer vous-mêmes en TP</strong>, le résultat dépend de votre machine.</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="stat-value">~1–2 s</div><div class="stat-label">pandas <code>groupby</code></div></div>
+        <div class="stat-tile"><div class="stat-value">~0.1 s</div><div class="stat-label">DuckDB <code>GROUP BY</code></div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>24 / 34</span></div>
+  </section>
+
+  <!-- 16. QUAND UTILISER QUOI -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">DuckDB dans l'écosystème</div>
+      <h2 class="title">Quand utiliser quoi ?</h2>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th>Outil</th><th>Déploiement</th><th>Volume typique</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DuckDB</strong></td><td>In-process, sur votre machine</td><td>Jusqu'à quelques dizaines de Go</td></tr>
+            <tr><td><strong>Spark</strong></td><td>Cluster distribué</td><td>To/Po, plusieurs machines</td></tr>
+            <tr><td><strong>BigQuery</strong></td><td>Service cloud managé</td><td>To/Po, facturé à la requête</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout" style="margin-top:1.4rem;">Pour ce module et la majorité des projets M1, DuckDB suffit largement — pas besoin d'infrastructure distribuée.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>25 / 34</span></div>
+  </section>
+
+  <!-- 17. RECAP + TRANSITION -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Récapitulatif</div>
+      <h2 class="title">Ce qu'on a vu aujourd'hui</h2>
+      <ul class="recap-list">
+        <li>SQL et pandas sont complémentaires, pas concurrents</li>
+        <li>Les bases, brique par brique : <strong>SELECT / WHERE / ORDER BY / GROUP BY / HAVING / JOIN</strong></li>
+        <li>DuckDB : in-process, zero-copy avec pandas, lecture directe de Parquet</li>
+      </ul>
+      <p class="callout" style="margin-top:1.8rem;"><strong>Place au TP :</strong> maintenant, un cas concret — comme dans un vrai projet de data engineering.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>26 / 34</span></div>
+  </section>
+
+  <!-- TP0 SECTION -->
+  <section class="slide slide--section">
+    <div class="slide-content">
+      <div class="section-num">04</div>
+      <h2 class="title">Le TP : un cas concret</h2>
+      <p class="subtitle">Une mission comme on en rencontre en entreprise : des données partielles, un besoin à satisfaire.</p>
+    </div>
+  </section>
+
+  <!-- TP1 BRIEF -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Le brief du client</h2>
+      <p class="subtitle">Vous êtes data engineer dans une société qui conseille collectivités et assureurs sur les risques environnementaux.</p>
+      <div class="diagram-compare"><div class="compare-box"><div class="box-title">Ce dont on dispose</div><ul class="bullets compact"><li><span>Des mesures <strong>ponctuelles</strong> : quelques centaines de capteurs</span></li><li><span><strong>4 réseaux</strong> différents (météo, air urbain, ozone, capteurs citoyens)</span></li><li><span>Des données <strong>sales</strong> : manquantes, aberrantes, formats hétérogènes</span></li></ul></div><div class="compare-vs">→</div><div class="compare-box"><div class="box-title">Ce que veut le client</div><ul class="bullets compact"><li><span>Connaître la qualité de l'air <strong>en tout point</strong> du territoire — pas seulement là où il y a un capteur</span></li><li><span>Un résultat <strong>lisible</strong> par des non-techniciens : 5 niveaux, de « Très bon » à « Très dégradé »</span></li><li><span>Une <strong>table en base</strong> réutilisable et une <strong>carte</strong></span></li></ul></div></div>
+      <p class="callout" style="margin-top:1.4rem;"><strong>Question métier :</strong> « Comment répond-on à partir de données incomplètes ? » — c'est le cœur de beaucoup de projets spatiaux.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>28 / 34</span></div>
+  </section>
+
+  <!-- TP2 LIVRABLE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Le livrable attendu</h2>
+      <p class="subtitle">Voici ce que vous aurez produit à la fin du TP, à partir des seuls relevés de capteurs.</p>
+      <div class="two-col narrow-gap" style="align-items:center;"><img src="img/carte_qualite_air.png" alt="Carte de l'indice de qualité de l'air sur la France métropolitaine, maillage de 10 km" style="width:100%;max-height:430px;object-fit:contain;border-radius:10px;border:1px solid var(--hairline);"><div><ul class="bullets compact"><li><span>Un <strong>maillage de 10×10 km</strong> de la France métropolitaine (~5 400 mailles)</span></li><li><span>Pour chaque maille : un <strong>niveau de qualité de l'air</strong>, estimé à partir des capteurs voisins</span></li><li><span>Écrit dans une nouvelle table <code>air_quality_index</code> de la base</span></li><li><span>Affiché sur une <strong>carte interactive</strong></span></li></ul><p class="callout" style="margin-top:1.2rem;">On retrouve les grandes agglomérations en orange/rouge : c'est un bon test de cohérence du résultat.</p></div></div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>29 / 34</span></div>
+  </section>
+
+  <!-- TP3 DONNEES -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Les données transmises par le client</h2>
+      <p class="subtitle">Une base <code>qualite_air.duckdb</code> : 4 tables, une par réseau de capteurs.</p>
+      <div class="table-wrap"><table class="cmp"><thead><tr><th>Table</th><th>Mesures</th><th>Colonne d'identifiant</th></tr></thead><tbody>
+<tr><td><code>releves_meteo</code></td><td>température, humidité, pluie, vent</td><td><code>id_station_meteo</code></td></tr>
+<tr><td><code>releves_qualite_air_urbain</code></td><td>NO2, PM10, PM2.5</td><td><code>code_capteur_aq</code></td></tr>
+<tr><td><code>releves_ozone_rural</code></td><td>O3</td><td><code>ref_station_o3</code></td></tr>
+<tr><td><code>releves_citoyen_pm</code></td><td>PM10 (capteurs low-cost)</td><td><code>capteur_uid_pm</code></td></tr></tbody></table></div>
+      <p class="callout" style="margin-top:1.2rem;"><strong>Comme dans la vraie vie :</strong> un identifiant qui ne s'appelle jamais pareil, des colonnes inutiles (fabricant, n° de série…), des valeurs manquantes et des mesures aberrantes. Le premier travail est de <strong>fiabiliser</strong> avant de calculer quoi que ce soit.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>30 / 34</span></div>
+  </section>
+
+  <!-- TP4 DEMARCHE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">La démarche, étape par étape</h2>
+      <p class="subtitle">Cinq grandes étapes, chacune appuyée sur une brique SQL vue aujourd'hui.</p>
+      <div class="diagram-flow"><div class="diagram-node" style="min-width:110px;"><div class="node-icon">🧹</div><div class="node-title">Fiabiliser</div><div class="node-desc">Renommer les ID, <code>WHERE … BETWEEN</code>, filtrer les capteurs pertinents</div></div><div class="diagram-arrow">→</div><div class="diagram-node" style="min-width:110px;"><div class="node-icon">🔗</div><div class="node-title">Rapprocher</div><div class="node-desc"><code>UNION ALL</code> des réseaux qui mesurent la même chose (PM10)</div></div><div class="diagram-arrow">→</div><div class="diagram-node" style="min-width:110px;"><div class="node-icon">🗺️</div><div class="node-title">Couvrir</div><div class="node-desc">Mailler la France en carrés de 10 km</div></div><div class="diagram-arrow">→</div><div class="diagram-node" style="min-width:110px;"><div class="node-icon">📐</div><div class="node-title">Estimer</div><div class="node-desc">Interpoler chaque mesure sur chaque maille : <code>CROSS JOIN</code> + <code>GROUP BY</code></div></div><div class="diagram-arrow">→</div><div class="diagram-node" style="min-width:110px;"><div class="node-icon">🚦</div><div class="node-title">Qualifier</div><div class="node-desc">Calculer l'indice 1–5, l'écrire en base, afficher la carte</div></div></div><p class="callout" style="margin-top:1.4rem;"><strong>Bonus</strong> pour les plus rapides : niveau de <strong>confiance</strong> de chaque estimation, et « donnée non disponible » quand elle est trop incertaine.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>31 / 34</span></div>
+  </section>
+
+  <!-- TP5 INTERPOLATION -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Estimer là où il n'y a pas de capteur</h2>
+      <p class="subtitle">Le concept central du TP : une moyenne pondérée par la proximité.</p>
+      <div class="two-col narrow-gap"><div class="compare-box"><div class="box-title">L'idée</div><ul class="bullets compact"><li><span>Pour une maille <em>y</em>, chaque capteur <em>i</em> « vote » avec un poids <em>wᵢ</em> qui décroît avec la distance</span></li><li><span><strong>Poids</strong> : wᵢ = exp( −(dᵢ / ℓ)² )</span></li><li><span><strong>Estimation</strong> : f(y) = Σ wᵢ·fᵢ / Σ wᵢ</span></li><li><span>ℓ = <em>portée d'influence</em> d'un capteur (à vous de la choisir)</span></li><li><span>Σ wᵢ dit si la maille est <strong>bien entourée</strong> de capteurs → base de la confiance</span></li></ul></div><div class="code-window"><div class="chrome"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="filename">en SQL (principe)</span></div><pre><code data-lang="sql">-- toutes les paires (maille, capteur)
+FROM maille m CROSS JOIN capteurs c
+
+-- un résultat par maille
+GROUP BY m.id_maille
+
+-- la moyenne pondérée
+SUM(w * valeur) / SUM(w)</code></pre></div></div>
+      <p class="callout" style="margin-top:1.2rem;">Ça fait <strong>plusieurs millions de lignes</strong> à agréger — exactement le cas où DuckDB, vu plus haut, fait la différence.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>32 / 34</span></div>
+  </section>
+
+  <!-- TP6 INDICE -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Du chiffre au niveau : l'indice</h2>
+      <p class="subtitle">Trois règles simples, inspirées des indices officiels de qualité de l'air.</p>
+      <ul class="check-list" style="font-size:1.05rem;gap:1rem;"><li><span><strong>1. Un sous-indice par polluant</strong> (PM10, PM2.5, NO2, O3) : la concentration estimée est convertie en niveau de 1 (Très bon) à 5 (Très dégradé) par des seuils.</span></li><li><span><strong>2. Le pire polluant l'emporte</strong> : l'indice global est le maximum des sous-indices — un seul polluant très mauvais suffit à dégrader la zone.</span></li><li><span><strong>3. Le vent module</strong> : air stagnant (&lt; 5 km/h) → un niveau en plus ; bonne dispersion (&gt; 25 km/h) → un niveau en moins.</span></li></ul>
+      <p class="callout" style="margin-top:1.6rem;">Les seuils exacts sont documentés dans <code>generation_base_donnees.ipynb</code> : à vous de les transformer en fonction.</p>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>33 / 34</span></div>
+  </section>
+
+  <!-- TP7 CHECKLIST -->
+  <section class="slide">
+    <div class="slide-content">
+      <div class="kicker">Le TP</div>
+      <h2 class="title">Avant de vous lancer</h2>
+      <p class="subtitle">Trois heures : un échauffement, le cas concret, puis le bonus.</p>
+      <ul class="check-list" style="font-size:1.02rem;"><li><span>Exécutez <strong><code>exercices/generation_base_donnees.ipynb</code></strong> une fois (quelques secondes) : il crée <code>data/qualite_air.duckdb</code></span></li><li><span>Ouvrez <strong><code>exercices/exercice.ipynb</code></strong> et remplacez les <code>&lt;TODO&gt;</code> au fil des cellules</span></li><li><span><em>(Optionnel)</em> installez le DuckDB CLI pour explorer la base dans le navigateur : <code>duckdb -ui data/qualite_air.duckdb</code> — procédure Mac/Windows en tête du notebook</span></li><li><span>Si vous êtes bloqué : revenez à la phrase en français, puis au dictionnaire SQL</span></li></ul>
+      <div class="stat-row" style="margin-top:1.6rem;"><div class="stat-tile"><div class="stat-value">~35 min</div><div class="stat-label">Partie 1 : prise en main</div></div><div class="stat-tile"><div class="stat-value">~2 h</div><div class="stat-label">Partie 2 : le cas concret</div></div><div class="stat-tile"><div class="stat-value">le reste</div><div class="stat-label">Bonus : confiance &amp; cartes</div></div></div>
+    </div>
+    <div class="slide-footer"><span>Python avancé — SpaceData</span><span>34 / 34</span></div>
+  </section>
+
+</div>
+
+<script src="../assets/deck.js"></script>
+</body>
+</html>
